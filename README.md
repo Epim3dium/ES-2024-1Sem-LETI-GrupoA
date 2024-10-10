@@ -1,4 +1,4 @@
 # Software engineering project
 ### Members
-members of out group:
+members of our group:
 - Jan Tacakiewicz 128094
