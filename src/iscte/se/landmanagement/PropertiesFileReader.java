@@ -2,8 +2,6 @@ package iscte.se.landmanagement;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,12 +9,12 @@ public class PropertiesFileReader {
     private final String filename;
     private ArrayList<Property> properties;
 
-    public PropertiesFileReader() {
-        filename = "Madeira-Moodle.csv";
+    public PropertiesFileReader(String filename) {
+        this.filename = filename;
         properties = new ArrayList<>();
     }
 
-    private void FileReader() {
+    protected void FileReader(String filename) {
         try (Scanner sc = new Scanner(new File(filename))) {
             if (sc.hasNextLine()) {
                 sc.nextLine();
@@ -42,14 +40,19 @@ public class PropertiesFileReader {
     }
 
     /**
-     * Reads all the corners of the property and returns them
+     * Reads all the coordinates of the corners of the property
      * @param line
      * @return
      */
     private static ArrayList<Coordinates> geometryCorners(String line) {
         ArrayList<Coordinates> corners = new ArrayList<>();
         String cleanedLine = line.replace("MULTIPOLYGON", "").replace("(", "").replace(")", " ").trim();
-        String[] parts = cleanedLine.split(",");
+        String[] coordinates = cleanedLine.split(",");
+
+        for(String coordinate: coordinates) {
+            String[] latitudeAndLongitude = coordinate.split("");
+            corners.add(new Coordinates(Double.parseDouble(latitudeAndLongitude[0]), Double.parseDouble(latitudeAndLongitude[1])));
+        }
 
 
         return corners;
