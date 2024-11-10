@@ -1,19 +1,21 @@
 package iscte.se.landmanagement;
 
+import java.util.ArrayList;
+
 public class Property {
     private int propertyID;
     private double parcelID;
     private int parcelNum;
     private double shapeLength;
     private double shapeArea;
-    private String propertyGeometry;
+    private ArrayList<Coordinates> corners;
     private int ownerID;
 
 
-    public Property(int ownerID, String propertyGeometry, double shapeArea, double shapeLength, int parcelNum, double parcelID, int propertyID) {
+    public Property(int propertyID,double parcelID,int ParcelNum,double shapeLength,double shapeArea,ArrayList<Coordinates> coorners,int ownerID) {
         this.ownerID = ownerID;
-        this.propertyGeometry = propertyGeometry;
-        this.shapeArea = shapeArea;
+        this.corners = corners;
+          this.shapeArea = shapeArea;
         this.shapeLength = shapeLength;
         this.parcelNum = parcelNum;
         this.parcelID = parcelID;
@@ -60,12 +62,12 @@ public class Property {
         this.shapeArea = shapeArea;
     }
 
-    public String getPropertyGeometry() {
-        return propertyGeometry;
+    public ArrayList<Coordinates> getCorners() {
+        return corners;
     }
 
-    public void setPropertyGeometry(String propertyGeometry) {
-        this.propertyGeometry = propertyGeometry;
+    public void setCorners(ArrayList<Coordinates> corners) {
+        this.corners = corners;
     }
 
     public int getOwnerID() {

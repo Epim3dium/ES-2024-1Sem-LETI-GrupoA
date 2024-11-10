@@ -14,7 +14,11 @@ public class PropertiesFileReader {
         properties = new ArrayList<>();
     }
 
-    protected void FileReader(String filename) {
+    /**
+     * Reads all the content and transforms all the data of the Properties in an ArrayList
+     */
+    protected void readPropertiesFile() {
+        ArrayList<Coordinates> coordinates = new ArrayList<>();
         try (Scanner sc = new Scanner(new File(filename))) {
             if (sc.hasNextLine()) {
                 sc.nextLine();
@@ -29,8 +33,9 @@ public class PropertiesFileReader {
                     int parcelNum = Integer.parseInt(parts[2]);
                     double shapeLength = Double.parseDouble(parts[3]);
                     double shapeArea = Double.parseDouble(parts[4]);
-
-
+                    coordinates = geometryCorners(parts[5]);
+                    int ownerId = Integer.parseInt(parts[6]);
+                    properties.add(new Property(propertyId, parcelID, parcelNum, shapeLength, shapeArea, coordinates, ownerId));
                 }
 
             }
@@ -41,20 +46,28 @@ public class PropertiesFileReader {
 
     /**
      * Reads all the coordinates of the corners of the property
-     * @param line
-     * @return
+     *
+     * @param line String that cointains the coordinates
+     * @return List of Coordinates representing the corners
      */
     private static ArrayList<Coordinates> geometryCorners(String line) {
         ArrayList<Coordinates> corners = new ArrayList<>();
         String cleanedLine = line.replace("MULTIPOLYGON", "").replace("(", "").replace(")", " ").trim();
         String[] coordinates = cleanedLine.split(",");
 
-        for(String coordinate: coordinates) {
-            String[] latitudeAndLongitude = coordinate.split("");
-            corners.add(new Coordinates(Double.parseDouble(latitudeAndLongitude[0]), Double.parseDouble(latitudeAndLongitude[1])));
+        for (String coordinate : coordinates) {
+            String[] latitudeAndLongitude = coordinate.split(" ");
+            if (latitudeAndLongitude.length == 2) {
+                try {
+                    double latitude = Double.parseDouble(latitudeAndLongitude[0]);
+                    double longitude = Double.parseDouble(latitudeAndLongitude[1]);
+                    corners.add(new Coordinates(latitude, longitude));
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid coordinate " + coordinate);
+                }
+            }
+
         }
-
-
         return corners;
     }
 }
