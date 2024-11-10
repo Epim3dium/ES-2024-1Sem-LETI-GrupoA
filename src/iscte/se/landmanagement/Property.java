@@ -9,6 +9,17 @@ public class Property {
     private String propertyGeometry;
     private int ownerID;
 
+
+    public Property(int ownerID, String propertyGeometry, double shapeArea, double shapeLength, int parcelNum, int parcelID, int propertyID) {
+        this.ownerID = ownerID;
+        this.propertyGeometry = propertyGeometry;
+        this.shapeArea = shapeArea;
+        this.shapeLength = shapeLength;
+        this.parcelNum = parcelNum;
+        this.parcelID = parcelID;
+        this.propertyID = propertyID;
+    }
+
     public int getPropertyID() {
         return propertyID;
     }
@@ -65,15 +76,5 @@ public class Property {
         this.ownerID = ownerID;
     }
 
-    public Property(int ownerID, String propertyGeometry, double shapeArea, double shapeLength, int parcelNum, int parcelID, int propertyID) {
-        this.ownerID = ownerID;
-        this.propertyGeometry = propertyGeometry;
-        this.shapeArea = shapeArea;
-        this.shapeLength = shapeLength;
-        this.parcelNum = parcelNum;
-        this.parcelID = parcelID;
-        this.propertyID = propertyID;
-
-
-    }
 }
+
