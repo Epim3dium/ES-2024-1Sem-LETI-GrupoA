@@ -2,7 +2,7 @@ package iscte.se.landmanagement;
 
 public class Property {
     private int propertyID;
-    private int parcelID;
+    private double parcelID;
     private int parcelNum;
     private double shapeLength;
     private double shapeArea;
@@ -10,7 +10,7 @@ public class Property {
     private int ownerID;
 
 
-    public Property(int ownerID, String propertyGeometry, double shapeArea, double shapeLength, int parcelNum, int parcelID, int propertyID) {
+    public Property(int ownerID, String propertyGeometry, double shapeArea, double shapeLength, int parcelNum, double parcelID, int propertyID) {
         this.ownerID = ownerID;
         this.propertyGeometry = propertyGeometry;
         this.shapeArea = shapeArea;
@@ -28,11 +28,11 @@ public class Property {
         this.propertyID = propertyID;
     }
 
-    public int getParcelID() {
+    public double getParcelID() {
         return parcelID;
     }
 
-    public void setParcelID(int parcelID) {
+    public void setParcelID(double parcelID) {
         this.parcelID = parcelID;
     }
 
