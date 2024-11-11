@@ -12,10 +12,10 @@ public class Property {
     private int ownerID;
 
 
-    public Property(int propertyID,double parcelID,int ParcelNum,double shapeLength,double shapeArea,ArrayList<Coordinates> coorners,int ownerID) {
+    public Property(int propertyID,double parcelID,int parcelNum,double shapeLength,double shapeArea,ArrayList<Coordinates> corners,int ownerID) {
         this.ownerID = ownerID;
         this.corners = corners;
-          this.shapeArea = shapeArea;
+        this.shapeArea = shapeArea;
         this.shapeLength = shapeLength;
         this.parcelNum = parcelNum;
         this.parcelID = parcelID;

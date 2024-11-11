@@ -27,7 +27,7 @@ public class PropertiesFileReader {
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 String[] parts = line.split(";");
-                if (parts.length > 7) {
+                if (parts.length == 7) {
                     int propertyId = Integer.parseInt(parts[0]);
                     double parcelID = Double.parseDouble(parts[1]);
                     int parcelNum = Integer.parseInt(parts[2]);
