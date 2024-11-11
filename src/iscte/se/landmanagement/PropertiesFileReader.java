@@ -47,7 +47,7 @@ public class PropertiesFileReader {
     /**
      * Reads all the coordinates of the corners of the property
      *
-     * @param line String that cointains the coordinates
+     * @param line String that contains the coordinates
      * @return List of Coordinates representing the corners
      */
     private static ArrayList<Coordinates> geometryCorners(String line) {
