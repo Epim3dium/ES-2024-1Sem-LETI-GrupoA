@@ -16,6 +16,7 @@ public class PropertiesFileReader {
 
     /**
      * Reads all the content and transforms all the data of the Properties in an ArrayList
+     * something
      */
     protected void readPropertiesFile() {
         ArrayList<Coordinates> coordinates = new ArrayList<>();
