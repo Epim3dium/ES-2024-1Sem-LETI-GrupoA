@@ -30,7 +30,7 @@ public class PropertiesFileReader {
                 if (parts.length == 7) {
                     int propertyId = Integer.parseInt(parts[0]);
                     double parcelID = Double.parseDouble(parts[1]);
-                    int parcelNum = 0;//Integer.parseInt(parts[2]);
+                    int parcelNum = (int) Double.parseDouble(parts[2].replace(',', '.'));
                     double shapeLength = Double.parseDouble(parts[3]);
                     double shapeArea = Double.parseDouble(parts[4]);
                     coordinates = geometryCorners(parts[5]);
