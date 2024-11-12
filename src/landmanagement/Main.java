@@ -5,9 +5,11 @@ import iscte.se.landmanagement.PropertiesFileReader;
 public class Main {
     public static void main(String[] args) {
 
-        System.out.printf("Hello and welcome!");
+        System.out.printf("Hello and welcome!\n");
 
         PropertiesFileReader prop_reader = new PropertiesFileReader("src/main/resources/Madeira-Moodle.csv");
         prop_reader.readPropertiesFile();
+        System.out.printf(Integer.toString(prop_reader.properties.get(0).getPropertyID()) + "\n");
+        System.out.printf(Integer.toString(prop_reader.properties.get(0).getOwnerID()));
     }
 }
