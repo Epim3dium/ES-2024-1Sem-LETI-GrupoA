@@ -11,7 +11,16 @@ public class Property {
     private ArrayList<Coordinates> corners;
     private int ownerID;
 
-
+    /**
+     *
+     * @param propertyID  property identification
+     * @param parcelID    parcel identification
+     * @param parcelNum   parcel number
+     * @param shapeLength Length of the property
+     * @param shapeArea   Area of the property
+     * @param corners     List of the coordinates of the property
+     * @param ownerID     Identification of the owner of the Property
+     */
     public Property(int propertyID,double parcelID,int parcelNum,double shapeLength,double shapeArea,ArrayList<Coordinates> corners,int ownerID) {
         this.ownerID = ownerID;
         this.corners = corners;
