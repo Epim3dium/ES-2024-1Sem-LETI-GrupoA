@@ -9,7 +9,7 @@ public class Main {
 
         PropertiesFileReader prop_reader = new PropertiesFileReader("src/main/resources/Madeira-Moodle.csv");
         prop_reader.readPropertiesFile();
-        System.out.printf(Integer.toString(prop_reader.properties.get(0).getPropertyID()) + "\n");
-        System.out.printf(Integer.toString(prop_reader.properties.get(0).getOwnerID()));
+        System.out.printf(Integer.toString(prop_reader.getProperties().get(0).getPropertyID()) + "\n");
+        System.out.printf(Integer.toString(prop_reader.getProperties().get(0).getOwnerID()));
     }
 }

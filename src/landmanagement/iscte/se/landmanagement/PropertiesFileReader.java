@@ -7,11 +7,15 @@ import java.util.Scanner;
 
 public class PropertiesFileReader {
     private final String filename;
-    public ArrayList<Property> properties;
+    private ArrayList<Property> properties;
 
+    public ArrayList<Property> getProperties() {
+        return properties;
+    }
     public PropertiesFileReader(String filename) {
         this.filename = filename;
         properties = new ArrayList<>();
+        readPropertiesFile();
     }
 
     /**
