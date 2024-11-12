@@ -1,3 +1,5 @@
+package iscte.se.landmanagement;
+
 import iscte.se.landmanagement.PropertiesFileReader;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
