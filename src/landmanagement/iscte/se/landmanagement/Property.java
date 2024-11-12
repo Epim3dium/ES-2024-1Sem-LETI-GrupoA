@@ -1,5 +1,4 @@
 package iscte.se.landmanagement;
-
 import java.util.ArrayList;
 
 public class Property {

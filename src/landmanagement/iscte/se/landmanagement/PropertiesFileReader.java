@@ -17,7 +17,7 @@ public class PropertiesFileReader {
     /**
      * Reads all the content and transforms all the data of the Properties in an ArrayList
      */
-    protected void readPropertiesFile() {
+    public void readPropertiesFile() {
         ArrayList<Coordinates> coordinates = new ArrayList<>();
         try (Scanner sc = new Scanner(new File(filename))) {
             if (sc.hasNextLine()) {
