@@ -1,5 +1,6 @@
-package iscte.se.landmanagement;
+package org.openjfx.es20241semletigrupoa;
 
+import iscte.se.landmanagement.Property;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -13,14 +14,15 @@ public class GraphExample {
 
     public GraphExample(ArrayList<Property> properties) {
         this.properties = properties;
-        Graph<String, DefaultEdge> g = formGraph();
+        Graph<Property, DefaultEdge> g = formGraph();
     }
 
-    private Graph<String, DefaultEdge> formGraph() {
+    private Graph<Property, DefaultEdge> formGraph() {
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         for (Property property : properties) {
             g.addVertex(property);
         }
+        return g;
     }
 
     public static void main(String[] args) {
