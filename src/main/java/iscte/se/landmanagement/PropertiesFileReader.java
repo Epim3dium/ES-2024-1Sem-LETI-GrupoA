@@ -9,13 +9,15 @@ public class PropertiesFileReader {
     private final String filename;
     private ArrayList<Property> properties;
 
-    public ArrayList<Property> getProperties() {
-        return properties;
-    }
+
     public PropertiesFileReader(String filename) {
         this.filename = filename;
         properties = new ArrayList<>();
         readPropertiesFile();
+    }
+
+    public ArrayList<Property> getProperties() {
+        return properties;
     }
 
     /**
