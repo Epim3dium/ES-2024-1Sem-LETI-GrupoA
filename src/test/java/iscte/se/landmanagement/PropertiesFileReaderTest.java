@@ -4,18 +4,31 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PropertiesFileReaderTest {
     PropertiesFileReader prop_reader;
+
     @BeforeEach
-    void setUp() {
-        prop_reader = new PropertiesFileReader("src/main/resources/test.csv");
+    void setUp()
+    { InputStream is = Main.class.getClassLoader().getResourceAsStream("test.csv");
+        if (is == null) {
+            System.out.println("Erro: O ficheiro Madeira-Moodle.csv não foi encontrado no classpath.");
+            return;
+        }
+        prop_reader = new PropertiesFileReader(is);
     }
     @Test
     void readingFile() {
         assertDoesNotThrow(() -> {
-            new PropertiesFileReader("src/main/resources/test.csv");
+            InputStream is = Main.class.getClassLoader().getResourceAsStream("test.csv");
+            if (is == null) {
+                System.out.println("Erro: O ficheiro Madeira-Moodle.csv não foi encontrado no classpath.");
+                return;
+            }
+            new PropertiesFileReader(is);
         });
     }
     @Test

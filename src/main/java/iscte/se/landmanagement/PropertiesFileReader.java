@@ -1,17 +1,16 @@
 package iscte.se.landmanagement;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PropertiesFileReader {
-    private final String filename;
+    private final InputStream inputStream;  // Alterado para InputStream
     private ArrayList<Property> properties;
 
-
-    public PropertiesFileReader(String filename) {
-        this.filename = filename;
+    // Alterado para aceitar InputStream
+    public PropertiesFileReader(InputStream inputStream) {
+        this.inputStream = inputStream;
         properties = new ArrayList<>();
         readPropertiesFile();
     }
@@ -25,9 +24,9 @@ public class PropertiesFileReader {
      */
     public void readPropertiesFile() {
         ArrayList<Coordinates> coordinates = new ArrayList<>();
-        try (Scanner sc = new Scanner(new File(filename))) {
+        try (Scanner sc = new Scanner(inputStream)) {  // Usa o InputStream aqui
             if (sc.hasNextLine()) {
-                sc.nextLine();
+                sc.nextLine(); // Pular a primeira linha, se necessário
             }
 
             while (sc.hasNextLine()) {
@@ -43,10 +42,9 @@ public class PropertiesFileReader {
                     int ownerId = Integer.parseInt(parts[6]);
                     properties.add(new Property(propertyId, parcelID, parcelNum, shapeLength, shapeArea, coordinates, ownerId));
                 }
-
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found");
+        } catch (Exception e) {
+            System.err.println("Error reading the file: " + e.getMessage());
         }
     }
 
@@ -72,7 +70,6 @@ public class PropertiesFileReader {
                     System.err.println("Invalid coordinate " + coordinate);
                 }
             }
-
         }
         return corners;
     }
