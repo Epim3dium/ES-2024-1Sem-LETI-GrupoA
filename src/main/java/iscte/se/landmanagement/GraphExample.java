@@ -13,14 +13,16 @@ public class GraphExample {
 
     public GraphExample(ArrayList<Property> properties) {
         this.properties = properties;
-        Graph<String, DefaultEdge> g = formGraph();
+        Graph<Property, DefaultEdge> g = formGraph();
+
     }
 
-    private Graph<String, DefaultEdge> formGraph() {
+    private Graph<Property, DefaultEdge> formGraph() {
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         for (Property property : properties) {
             g.addVertex(property);
         }
+        return g;
     }
 
     public static void main(String[] args) {
