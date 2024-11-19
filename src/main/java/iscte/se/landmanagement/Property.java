@@ -86,5 +86,9 @@ public class Property {
         this.ownerID = ownerID;
     }
 
+    public String toString() {
+        return "Property" + propertyID;
+    }
+
 }
 

@@ -16,10 +16,21 @@
 <junit.version>5.10.2</junit.version>  </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-ext</artifactId>
+      <version>1.5.2</version>
+    </dependency>
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.nasdanika.core</groupId>
+      <artifactId>mxgraph</artifactId>
+      <version>4.2.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -65,7 +76,9 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>  </dependencies>
+    </dependency>
+
+  </dependencies>
 
   <build>
     <plugins>
