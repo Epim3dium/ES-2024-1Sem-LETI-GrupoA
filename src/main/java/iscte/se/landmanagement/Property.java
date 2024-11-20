@@ -4,30 +4,27 @@ import java.util.ArrayList;
 public class Property {
     private int propertyID;
     private double parcelID;
-    private int parcelNum;
+    private double parcelNum;
     private double shapeLength;
     private double shapeArea;
     private ArrayList<Coordinates> corners;
     private int ownerID;
+    private String parish;
+    private String municipality;
+    private String island;
 
-    /**
-     *
-     * @param propertyID  property identification
-     * @param parcelID    parcel identification
-     * @param parcelNum   parcel number
-     * @param shapeLength Length of the property
-     * @param shapeArea   Area of the property
-     * @param corners     List of the coordinates of the property
-     * @param ownerID     Identification of the owner of the Property
-     */
-    public Property(int propertyID,double parcelID,int parcelNum,double shapeLength,double shapeArea,ArrayList<Coordinates> corners,int ownerID) {
-        this.ownerID = ownerID;
-        this.corners = corners;
-        this.shapeArea = shapeArea;
-        this.shapeLength = shapeLength;
-        this.parcelNum = parcelNum;
-        this.parcelID = parcelID;
+
+    public Property(int propertyID, double parcelID, double parcelNum, double shapeLength, double shapeArea, ArrayList<Coordinates> corners, int ownerID, String parish, String municipality, String island) {
         this.propertyID = propertyID;
+        this.parcelID = parcelID;
+        this.parcelNum = parcelNum;
+        this.shapeLength = shapeLength;
+        this.shapeArea = shapeArea;
+        this.corners = corners;
+        this.ownerID = ownerID;
+        this.parish = parish;
+        this.municipality = municipality;
+        this.island = island;
     }
 
     public int getPropertyID() {
@@ -46,7 +43,7 @@ public class Property {
         this.parcelID = parcelID;
     }
 
-    public int getParcelNum() {
+    public double getParcelNum() {
         return parcelNum;
     }
 
@@ -86,5 +83,28 @@ public class Property {
         this.ownerID = ownerID;
     }
 
+    public String getParish() {
+        return parish;
+    }
+
+    public void setParish(String parish) {
+        this.parish = parish;
+    }
+
+    public String getMunicipality() {
+        return municipality;
+    }
+
+    public void setMunicipality(String municipality) {
+        this.municipality = municipality;
+    }
+
+    public String getIsland() {
+        return island;
+    }
+
+    public void setIsland(String island) {
+        this.island = island;
+    }
 }
 

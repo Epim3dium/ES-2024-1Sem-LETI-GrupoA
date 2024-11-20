@@ -14,7 +14,7 @@ class PropertyTest {
     void initialization() {
         Coordinates c = new Coordinates(0, 0);
         Property prop = new Property(1, 2, 3, 4,
-                5, new ArrayList<>(), 6);
+                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
         assertEquals(1, prop.getPropertyID());
         assertEquals(2, prop.getParcelID());
         assertEquals(3, prop.getParcelNum());
@@ -25,7 +25,7 @@ class PropertyTest {
     void settingAndGetting() {
         Coordinates c = new Coordinates(0, 0);
         Property prop = new Property(1, 2, 3, 4,
-                5, new ArrayList<>(), 6);
+                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
         prop.setPropertyID(2);
         prop.setParcelID(2);
         prop.setOwnerID(2);
