@@ -39,9 +39,10 @@ public class GraphExample {
 
 
         GraphExample g= new GraphExample(p.getProperties());
-        //saveGraphAsImage(g.getG(),"src/main/resources");
-
-
+        //givenAdaptedGraph_whenWriteBufferedImage_thenFileShouldExist(g.graph);
+//        saveGraphAsImage(g.getG(),"src/main/resources");
+//
+//
 //        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>((g.getG()));
 //
 //        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
@@ -58,8 +59,6 @@ public class GraphExample {
 
 
     }
-
-
 
 
     public GraphExample(ArrayList<Property> properties) {
@@ -121,7 +120,7 @@ public class GraphExample {
         return 2;
     }
 
-    void givenAdaptedGraph_whenWriteBufferedImage_thenFileShouldExist(Graph<Property, DefaultEdge> g) throws IOException {
+    static void givenAdaptedGraph_whenWriteBufferedImage_thenFileShouldExist(Graph<Property, DefaultEdge> g) throws IOException {
 
         JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<Property, DefaultEdge>(g);
         mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
@@ -151,7 +150,11 @@ public class GraphExample {
         } else {
             System.err.println("Failed to save graph image.");
         }
+
+
     }
+
+
 
 
 
