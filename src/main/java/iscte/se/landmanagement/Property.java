@@ -1,5 +1,11 @@
 package iscte.se.landmanagement;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.GeometryFactory;
 
 public class Property {
     private int propertyID;
@@ -85,6 +91,13 @@ public class Property {
     public void setOwnerID(int ownerID) {
         this.ownerID = ownerID;
     }
+
+//    // Método para obter o polígono a partir das coordenadas
+//    public Polygon getPolygon() {
+//        GeometryFactory geometryFactory = new GeometryFactory();
+//        return geometryFactory.createPolygon((CoordinateSequence) corners);
+//    }
+
 
     public String toString() {
         return "Property" + propertyID;
