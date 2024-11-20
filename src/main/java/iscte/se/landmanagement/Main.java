@@ -22,8 +22,9 @@ public class Main {
 
        propFileReader.readFile();
        propFileReader.convertToPropertiy();
-
-        System.out.printf(Integer.toString(propFileReader.getProperties().get(0).getPropertyID()) + "\n");
-        System.out.printf(Integer.toString(propFileReader.getProperties().get(0).getOwnerID()));
+        System.out.printf("PropertyID: " + Integer.toString(propFileReader.getProperties().get(1).getPropertyID()) + "\t");
+        System.out.printf("OwnerID: "+  Integer.toString(propFileReader.getProperties().get(1).getOwnerID())+"\n");
+        System.out.printf("Island: " + propFileReader.getProperties().get(1).getIsland() + "\t");
+        System.out.print("Parish: " + propFileReader.getProperties().get(1).getParish());
     }
 }

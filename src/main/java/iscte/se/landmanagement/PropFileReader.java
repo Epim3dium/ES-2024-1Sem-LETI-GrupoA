@@ -48,23 +48,22 @@ public class PropFileReader {
     }
 
     public void convertToPropertiy() {
+        int i =0;
         for (String[] lines : fileLines) {
+            System.out.println(Arrays.toString(fileLines.get(i)));
+            int propertyId = Integer.parseInt(lines[0].trim());
+            double parcelId = Double.parseDouble(lines[1].trim());
+            double parcelNum = Double.parseDouble(lines[2].replace(',', '.').trim());
+            double shapeLength = Double.parseDouble(lines[3].trim());
+            double shapeArea = Double.parseDouble(lines[4].trim());
+            ArrayList<Coordinates> coords = readCoordinates(lines[5].trim());
+            int ownerId = Integer.parseInt(lines[6].trim());
+            String parish = lines[7].trim();
+            String municipality = lines[8].trim();
+            String island = lines[9].trim();
 
-                System.out.println(Arrays.toString(fileLines.get(1)));
-
-                int propertyId = Integer.parseInt(lines[0].trim());
-                double parcelId = Double.parseDouble(lines[1].trim());
-                double parcelNum = Double.parseDouble(lines[2].replace(',', '.').trim());
-                double shapeLength = Double.parseDouble(lines[3].trim());
-                double shapeArea = Double.parseDouble(lines[4].trim());
-                ArrayList<Coordinates> coords = readCoordinates(lines[5].trim());
-                int ownerId = Integer.parseInt(lines[6].trim());
-                String parish = lines[7].trim();
-                String municipality = lines[8].trim();
-                String island = lines[9].trim();
-
-                properties.add(new Property(propertyId, parcelId, parcelNum, shapeLength, shapeArea, coords, ownerId, parish, municipality, island));
-
+            properties.add(new Property(propertyId, parcelId, parcelNum, shapeLength, shapeArea, coords, ownerId, parish, municipality, island));
+            i++;
         }
     }
 
@@ -78,7 +77,6 @@ public class PropFileReader {
         for (int i = 0; i < cornersCoordinates.length; i++) {
             cornersCoordinates[i] = cornersCoordinates[i].trim();
             String[] coordinate = cornersCoordinates[i].split("\\s+");
-            System.out.println("Coordenada X " + coordinate[0] + " Coordenada y " + coordinate[1] + " FIm");
             coordinates.add(new Coordinates(Double.parseDouble(coordinate[0].trim()), Double.parseDouble(coordinate[1].trim())));
         }
         return coordinates;

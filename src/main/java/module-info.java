@@ -4,6 +4,7 @@ module org.openjfx.es20241semletigrupoa {
 
     requires com.dlsc.formsfx;
     requires com.opencsv;
+    requires javafx.graphics;
 
     opens org.openjfx.es20241semletigrupoa to javafx.fxml;
     exports org.openjfx.es20241semletigrupoa;
