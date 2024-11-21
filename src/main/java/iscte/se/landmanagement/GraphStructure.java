@@ -41,7 +41,8 @@ public class GraphStructure {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g= new GraphStructure(propFileReader.getProperties());
+        GraphStructure g= new GraphStructure(propFileReader.getProperties(),1);
+        //g.visualizeGraph();
 
 
 
@@ -79,22 +80,46 @@ public class GraphStructure {
 
     }
 
+//    public void visualizeGraph() {
+//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>(this.graph);
+//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
+//        layout.execute(graphAdapter.getDefaultParent());
+//
+//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
+//            @Override
+//            public void mouseWheelMoved(MouseWheelEvent e) {
+//                if (e.getWheelRotation() < 0) {
+//                    graphComponent.zoomIn();
+//                } else {
+//                    graphComponent.zoomOut();
+//                }
+//            }
+//        });
+//
+//        JFrame frame = new JFrame("Graph Visualization");
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.add(graphComponent);
+//        frame.setSize(1400, 1400);
+//        frame.setVisible(true);
+//    }
 
 
-
-    public GraphStructure(ArrayList<Property> properties) {
+    public GraphStructure(ArrayList<Property> properties, int threshold) {
         this.properties = properties;
-        this.threshold=1;
+        this.threshold=threshold;
         System.out.println("w");
         this.graph = formGraph();
 
     }
 
-    public Graph<Property,DefaultEdge> getG(){
-        return this.graph;
-    }
 
-
+    /**
+     * Creates a graph where each vertex represents a `Property` object, and edges are added
+     * between vertices if the corresponding properties are adjacent based on a defined distance condition.
+     *
+     * @return
+     */
     private Graph<Property, DefaultEdge> formGraph() {
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t=0;
@@ -108,10 +133,11 @@ public class GraphStructure {
                 Property p2 = properties.get(j);
 
 
-                if (areAdjacentByDistance(p1, p2, threshold)) {
+                if (areAdjacentByDistance(p1, p2)){
                     System.out.println(t+" ");
                     t++;
                     g.addEdge(p1, p2);
+                    addNeighbours(p1,p2);
                 }
             }
         }
@@ -125,7 +151,25 @@ public class GraphStructure {
         return g;
     }
 
-    public static boolean areAdjacentByDistance(Property p1, Property p2, double threshold) {
+
+    /**
+     *Establishes a bidirectional neighbor relationship between two properties
+     * @param p1 p1 The first `Property` object.
+     * @param p2 p2 The second `Property` object.
+     */
+    private void addNeighbours(Property p1, Property p2) {
+        p1.addNeighbour(p2);
+        p2.addNeighbour(p1);
+    }
+
+    /**
+     * Determines if two properties are adjacent based on the distance between their corners.
+     * @param p1 p1 The first `Property` object to compare.
+     * @param p2 p2 The second `Property` object to compare.
+     * @return `true` if the properties are adjacent (i.e., at least one pair of corners has a distance
+     *  *         less than or equal to the threshold), otherwise `false`.
+     */
+    public boolean areAdjacentByDistance(Property p1, Property p2) {
         List<Coordinates> corners1 = p1.getCorners();
         List<Coordinates> corners2 = p2.getCorners();
 
@@ -141,11 +185,20 @@ public class GraphStructure {
         return false;
     }
 
-
-    private static double calculateDistance(Coordinates c1, Coordinates c2) {
+    /**
+     * Calculates the Euclidean distance between two points represented by `Coordinates`.
+     * @param c1 c1 The first point as a `Coordinates` object.
+     * @param c2 c2 The second point as a `Coordinates` object.
+     * @return The Euclidean distance between `c1` and `c2`.
+     */
+    public static double calculateDistance(Coordinates c1, Coordinates c2) {
         double dx = c2.getX() - c1.getX();
         double dy = c2.getY() - c1.getY();
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public Graph<Property,DefaultEdge> getG(){
+        return this.graph;
     }
 
 

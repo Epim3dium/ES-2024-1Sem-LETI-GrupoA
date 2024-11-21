@@ -72,7 +72,7 @@ public class PropFileReader {
 
     }
 
-    private ArrayList<Coordinates> readCoordinates(String line) {
+    public ArrayList<Coordinates> readCoordinates(String line) {
         ArrayList<Coordinates> coordinates = new ArrayList<>();
         if (line.contains("MULTIPOLYGON EMPTY")) {
             return coordinates;
