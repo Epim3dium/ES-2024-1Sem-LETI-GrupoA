@@ -7,6 +7,7 @@ module org.openjfx.es20241semletigrupoa {
 
     requires org.jgrapht.ext;
     requires org.locationtech.jts;
+    requires com.opencsv;
 
     opens org.openjfx.es20241semletigrupoa to javafx.fxml;
     exports org.openjfx.es20241semletigrupoa;

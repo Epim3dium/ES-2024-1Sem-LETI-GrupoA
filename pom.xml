@@ -16,6 +16,12 @@
 <junit.version>5.10.2</junit.version>  </properties>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>5.9</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
     <dependency>
       <groupId>org.locationtech.jts</groupId>

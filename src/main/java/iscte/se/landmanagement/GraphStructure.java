@@ -14,6 +14,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,42 +28,50 @@ public class GraphStructure {
     private ArrayList<Property> properties;
     private int threshold;
 
-    public static void main(String[] args) throws IOException {
-        PropertiesFileReader p=new PropertiesFileReader("src/main/resources/Madeira-Moodle.csv");
+    public static void main(String[] args) throws Exception {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+        if (url == null) {
+            System.out.println("Arquivo CSV não encontrado!");
+            return;
+        }
+
+        Path path = Paths.get(url.toURI());
+        PropFileReader propFileReader = new PropFileReader(path);
+
+        propFileReader.readFile();
+        propFileReader.convertToPropertiy();
+
+        GraphStructure g= new GraphStructure(propFileReader.getProperties());
 
 
 
-        GraphStructure g= new GraphStructure(p.getProperties());
-
-
-
-        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>((g.getG()));
-
-        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-
-
-        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-
-
-        graphComponent.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.getWheelRotation() < 0) {
-
-                    graphComponent.zoomIn();
-                } else {
-
-                    graphComponent.zoomOut();
-                }
-            }
-        });
-
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(graphComponent);
-        frame.setSize(1400, 1400);
-        frame.setVisible(true);
+//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>((g.getG()));
+//
+//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
+//        layout.execute(graphAdapter.getDefaultParent());
+//
+//
+//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+//
+//
+//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
+//            @Override
+//            public void mouseWheelMoved(MouseWheelEvent e) {
+//                if (e.getWheelRotation() < 0) {
+//
+//                    graphComponent.zoomIn();
+//                } else {
+//
+//                    graphComponent.zoomOut();
+//                }
+//            }
+//        });
+//
+//        JFrame frame = new JFrame();
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.add(graphComponent);
+//        frame.setSize(1400, 1400);
+//        frame.setVisible(true);
 
 
 
@@ -72,7 +84,8 @@ public class GraphStructure {
 
     public GraphStructure(ArrayList<Property> properties) {
         this.properties = properties;
-        this.threshold=4;
+        this.threshold=1;
+        System.out.println("w");
         this.graph = formGraph();
 
     }
@@ -84,7 +97,9 @@ public class GraphStructure {
 
     private Graph<Property, DefaultEdge> formGraph() {
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
+        int t=0;
         for (Property property : properties) {
+
             g.addVertex(property);
         }
         for (int i = 0; i < properties.size(); i++) {
@@ -94,12 +109,19 @@ public class GraphStructure {
 
 
                 if (areAdjacentByDistance(p1, p2, threshold)) {
+                    System.out.println(t+" ");
+                    t++;
                     g.addEdge(p1, p2);
                 }
             }
         }
-        System.out.println(g.vertexSet());
-        System.out.println(g.edgeSet());
+//        System.out.println(g.vertexSet());
+//
+//        System.out.println(g.edgeSet());
+
+        System.out.println(g.vertexSet().size());
+        System.out.println(g.edgeSet().size());
+
         return g;
     }
 
