@@ -20,20 +20,20 @@ public class GraphExampleTest {
     void set(){
 
         ArrayList<Coordinates> coordinatesList1 = new ArrayList<>();
-        coordinatesList1.add(new Coordinates(0, 0));
-        coordinatesList1.add(new Coordinates(1, 0));
-        coordinatesList1.add(new Coordinates(1, 1));
-        coordinatesList1.add(new Coordinates(0, 1));
+        coordinatesList1.add(new Coordinates(10.0, 20.0));
+        coordinatesList1.add(new Coordinates(10.0, 22.0));
+        coordinatesList1.add(new Coordinates(12.0, 22.0));
+        coordinatesList1.add(new Coordinates(12.0, 20.0));
         ArrayList<Coordinates> coordinatesList2 = new ArrayList<>();
         coordinatesList2.add(new Coordinates(2, 1));
         coordinatesList2.add(new Coordinates(3, 2));
         coordinatesList2.add(new Coordinates(2, 0));
         coordinatesList2.add(new Coordinates(3, 0));
         ArrayList<Coordinates> coordinatesList3 = new ArrayList<>();
-        coordinatesList3.add(new Coordinates(0, 0));
-        coordinatesList3.add(new Coordinates(1, 3));
-        coordinatesList3.add(new Coordinates(2, 3));
-        coordinatesList3.add(new Coordinates(2, 2));
+        coordinatesList3.add(new Coordinates(12.0, 20.0));
+        coordinatesList3.add(new Coordinates(12.0, 22.0));
+        coordinatesList3.add(new Coordinates(14.0, 22.0));
+        coordinatesList3.add(new Coordinates(14.0, 20.0));
         properties = new ArrayList<>();
 
         Property p1 = new Property(1, 2, 3, 4,

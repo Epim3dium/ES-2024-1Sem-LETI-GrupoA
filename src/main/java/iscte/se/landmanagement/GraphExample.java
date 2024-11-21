@@ -120,7 +120,7 @@ public class GraphExample {
         return 2;
     }
 
-    static void givenAdaptedGraph_whenWriteBufferedImage_thenFileShouldExist(Graph<Property, DefaultEdge> g) throws IOException {
+    public void givenAdaptedGraph_whenWriteBufferedImage_thenFileShouldExist(Graph<Property, DefaultEdge> g) throws IOException {
 
         JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<Property, DefaultEdge>(g);
         mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
