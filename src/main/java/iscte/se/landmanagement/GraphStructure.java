@@ -24,6 +24,7 @@ import java.util.List;
 
 import static java.lang.System.exit;
 
+
 public class GraphStructure {
 
     private Graph<Property, DefaultEdge> graph;
@@ -125,10 +126,10 @@ public class GraphStructure {
      * @return
      */
     private Graph<Property, DefaultEdge> formGraph() {
+
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t=0;
         for (Property property : properties) {
-
             g.addVertex(property);
         }
         double max_prop_size = 0.f;
@@ -144,6 +145,18 @@ public class GraphStructure {
             max_prop_size = Math.max(current.area().getX(), max_prop_size);
             max_prop_size = Math.max(current.area().getY(), max_prop_size);
             aabbs.add(current);
+        }
+        double cell_size = max_prop_size;
+        double maxIdxX = range_all.area().getX() / cell_size;
+        double maxIdxY = range_all.area().getY() / cell_size;
+        List<List<List<Property>>> grid = new ArrayList<>();
+        //creating the grid
+        for(int i = 0; i < maxIdxY + 1; i++) {
+            grid.add(new ArrayList<>());
+            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+                grid.get(i).add(new ArrayList<>());
+                System.out.println(i + " : " + ii);
+            }
         }
         for (int i = 0; i < properties.size(); i++) {
             for (int j = i + 1; j < properties.size(); j++) {
