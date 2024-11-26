@@ -61,8 +61,6 @@ public class PropFileReader {
 
             cornersCoordinates[i] = cornersCoordinates[i].trim();
             String[] coordinate = cornersCoordinates[i].split("\\s+");
-            System.out.print(coordinate[0] +"");
-            System.out.print(coordinate[1] +"");
             coordinates.add(new Coordinates(Double.parseDouble(coordinate[0].trim()), Double.parseDouble(coordinate[1].trim())));
         }
         return coordinates;

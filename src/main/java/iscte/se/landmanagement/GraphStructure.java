@@ -1,23 +1,10 @@
 package iscte.se.landmanagement;
 
 
-import com.mxgraph.swing.mxGraphComponent;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-
-import org.jgrapht.ext.JGraphXAdapter;
-import com.mxgraph.layout.mxCircleLayout;
-
-import javax.swing.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,87 +15,10 @@ public class GraphStructure {
     private ArrayList<Property> properties;
     private int threshold;
 
-    public static void main(String[] args) throws Exception {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
-        if (url == null) {
-            System.out.println("Arquivo CSV não encontrado!");
-            return;
-        }
-
-        Path path = Paths.get(url.toURI());
-        PropFileReader propFileReader = new PropFileReader(path);
-
-        propFileReader.readFile();
-        propFileReader.convertToPropertiy();
-
-        GraphStructure g= new GraphStructure(propFileReader.getProperties(),1);
-        //g.visualizeGraph();
-
-
-
-//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>((g.getG()));
-//
-//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-//        layout.execute(graphAdapter.getDefaultParent());
-//
-//
-//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-//
-//
-//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
-//            @Override
-//            public void mouseWheelMoved(MouseWheelEvent e) {
-//                if (e.getWheelRotation() < 0) {
-//
-//                    graphComponent.zoomIn();
-//                } else {
-//
-//                    graphComponent.zoomOut();
-//                }
-//            }
-//        });
-//
-//        JFrame frame = new JFrame();
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.add(graphComponent);
-//        frame.setSize(1400, 1400);
-//        frame.setVisible(true);
-
-
-
-
-
-    }
-
-//    public void visualizeGraph() {
-//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>(this.graph);
-//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-//        layout.execute(graphAdapter.getDefaultParent());
-//
-//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
-//            @Override
-//            public void mouseWheelMoved(MouseWheelEvent e) {
-//                if (e.getWheelRotation() < 0) {
-//                    graphComponent.zoomIn();
-//                } else {
-//                    graphComponent.zoomOut();
-//                }
-//            }
-//        });
-//
-//        JFrame frame = new JFrame("Graph Visualization");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.add(graphComponent);
-//        frame.setSize(1400, 1400);
-//        frame.setVisible(true);
-//    }
-
 
     public GraphStructure(ArrayList<Property> properties, int threshold) {
         this.properties = properties;
-        this.threshold=threshold;
-        System.out.println("w");
+        this.threshold = threshold ;
         this.graph = formGraph();
 
     }
@@ -122,7 +32,7 @@ public class GraphStructure {
      */
     private Graph<Property, DefaultEdge> formGraph() {
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
-        int t=0;
+        int t = 0;
         for (Property property : properties) {
 
             g.addVertex(property);
@@ -133,11 +43,11 @@ public class GraphStructure {
                 Property p2 = properties.get(j);
 
 
-                if (areAdjacentByDistance(p1, p2)){
-                    System.out.println(t+" ");
+                if (areAdjacentByDistance(p1, p2)) {
+                    System.out.println(t + " ");
                     t++;
                     g.addEdge(p1, p2);
-                    addNeighbours(p1,p2);
+                    addNeighbours(p1, p2);
                 }
             }
         }
@@ -153,7 +63,8 @@ public class GraphStructure {
 
 
     /**
-     *Establishes a bidirectional neighbor relationship between two properties
+     * Establishes a bidirectional neighbor relationship between two properties
+     *
      * @param p1 p1 The first `Property` object.
      * @param p2 p2 The second `Property` object.
      */
@@ -164,10 +75,11 @@ public class GraphStructure {
 
     /**
      * Determines if two properties are adjacent based on the distance between their corners.
+     *
      * @param p1 p1 The first `Property` object to compare.
      * @param p2 p2 The second `Property` object to compare.
      * @return `true` if the properties are adjacent (i.e., at least one pair of corners has a distance
-     *  *         less than or equal to the threshold), otherwise `false`.
+     * *         less than or equal to the threshold), otherwise `false`.
      */
     public boolean areAdjacentByDistance(Property p1, Property p2) {
         List<Coordinates> corners1 = p1.getCorners();
@@ -187,6 +99,7 @@ public class GraphStructure {
 
     /**
      * Calculates the Euclidean distance between two points represented by `Coordinates`.
+     *
      * @param c1 c1 The first point as a `Coordinates` object.
      * @param c2 c2 The second point as a `Coordinates` object.
      * @return The Euclidean distance between `c1` and `c2`.
@@ -197,14 +110,9 @@ public class GraphStructure {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public Graph<Property,DefaultEdge> getG(){
+    public Graph<Property, DefaultEdge> getG() {
         return this.graph;
     }
-
-
-
-
-
 
 
 }

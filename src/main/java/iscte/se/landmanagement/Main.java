@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws Exception {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+        URL url = Thread.currentThread().getContextClassLoader().getResource("test.csv");
         if (url == null) {
             System.out.println("Arquivo CSV não encontrado!");
             return;
@@ -26,5 +26,7 @@ public class Main {
         System.out.printf("OwnerID: "+  Integer.toString(propFileReader.getProperties().get(1).getOwnerID())+"\n");
         System.out.printf("Island: " + propFileReader.getProperties().get(1).getIsland() + "\t");
         System.out.print("Parish: " + propFileReader.getProperties().get(1).getParish());
+
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
     }
 }
