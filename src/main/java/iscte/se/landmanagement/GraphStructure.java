@@ -158,17 +158,15 @@ public class GraphStructure {
                 System.out.println(i + " : " + ii);
             }
         }
+        //inserting to grid
         for (int i = 0; i < properties.size(); i++) {
-            for (int j = i + 1; j < properties.size(); j++) {
-                Property p1 = properties.get(i);
-                Property p2 = properties.get(j);
-
-
-                if (areAdjacentByDistance(p1, p2)){
-                    System.out.println(t+" ");
-                    t++;
-                    g.addEdge(p1, p2);
-                    addNeighbours(p1,p2);
+            AABB aabb = aabbs.get(i);
+            Property p = properties.get(i);
+            Coordinates transformed = aabb.center();
+            transformed.setX((transformed.getX() - range_all.getLeft()) / cell_size);
+            transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
+            grid.get((int)transformed.getY()).get((int)transformed.getX()).add(p);
+        }
                 }
             }
         }
