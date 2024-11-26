@@ -1,5 +1,6 @@
 package iscte.se.landmanagement;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Property {
     private int propertyID;
@@ -12,7 +13,7 @@ public class Property {
     private String parish;
     private String municipality;
     private String island;
-
+    private ArrayList<Property> neighbors;
 
     public Property(int propertyID, double parcelID, double parcelNum, double shapeLength, double shapeArea, ArrayList<Coordinates> corners, int ownerID, String parish, String municipality, String island) {
         this.propertyID = propertyID;
@@ -25,6 +26,7 @@ public class Property {
         this.parish = parish;
         this.municipality = municipality;
         this.island = island;
+        this.neighbors = new ArrayList<Property>();
     }
 
     public int getPropertyID() {
@@ -105,6 +107,14 @@ public class Property {
 
     public void setIsland(String island) {
         this.island = island;
+    }
+
+    public void addNeighbour(Property p) {
+        neighbors.add(p);
+    }
+
+    public ArrayList<Property> getNeighbours() {
+        return this.neighbors;
     }
 }
 
