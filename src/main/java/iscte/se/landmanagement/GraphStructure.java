@@ -2,6 +2,7 @@ package iscte.se.landmanagement;
 
 
 import com.mxgraph.swing.mxGraphComponent;
+import javafx.util.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.exit;
 
 public class GraphStructure {
 
@@ -128,6 +130,20 @@ public class GraphStructure {
         for (Property property : properties) {
 
             g.addVertex(property);
+        }
+        double max_prop_size = 0.f;
+        List<AABB> aabbs = new ArrayList<>();
+        AABB range_all = new AABB();
+        for (Property property : properties) {
+            List<Coordinates> corners = property.getCorners();
+            AABB current = new AABB();
+            for ( Coordinates c : corners) {
+                current.expandToContain(c);
+                range_all.expandToContain(c);
+            }
+            max_prop_size = Math.max(current.area().getX(), max_prop_size);
+            max_prop_size = Math.max(current.area().getY(), max_prop_size);
+            aabbs.add(current);
         }
         for (int i = 0; i < properties.size(); i++) {
             for (int j = i + 1; j < properties.size(); j++) {
