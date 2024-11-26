@@ -27,6 +27,11 @@ public class AABB {
     public Coordinates area() {
         return new Coordinates(right - left, top - bottom);
     }
+    public boolean isOverlapping(AABB other, double threshold ){
+        if(other == null) return false;
+        return (left <= other.right + threshold  && right + threshold >= other.left &&
+                    bottom <= other.top + threshold && top + threshold >= bottom);
+    }
 
     public AABB() {
         top = -1e100;
