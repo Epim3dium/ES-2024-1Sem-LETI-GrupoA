@@ -135,6 +135,7 @@ public class GraphStructure {
         double max_prop_size = 0.f;
         List<AABB> aabbs = new ArrayList<>();
         AABB range_all = new AABB();
+        int max_edges = 0;
         for (Property property : properties) {
             List<Coordinates> corners = property.getCorners();
             AABB current = new AABB();
@@ -142,20 +143,26 @@ public class GraphStructure {
                 current.expandToContain(c);
                 range_all.expandToContain(c);
             }
+            max_edges = Math.max(max_edges, property.getCorners().size());
             max_prop_size = Math.max(current.area().getX(), max_prop_size);
             max_prop_size = Math.max(current.area().getY(), max_prop_size);
             aabbs.add(current);
         }
+        System.out.println("max edges: " + max_edges);
+
         double cell_size = max_prop_size;
         double maxIdxX = range_all.area().getX() / cell_size;
         double maxIdxY = range_all.area().getY() / cell_size;
         List<List<List<Property>>> grid = new ArrayList<>();
+        List<List<List<AABB>>> grid_aabbs = new ArrayList<>();
         //creating the grid
         for(int i = 0; i < maxIdxY + 1; i++) {
             grid.add(new ArrayList<>());
+            grid_aabbs.add(new ArrayList<>());
             for(int ii = 0; ii < maxIdxX + 1; ii++) {
                 grid.get(i).add(new ArrayList<>());
-                System.out.println(i + " : " + ii);
+                grid_aabbs.get(i).add(new ArrayList<>());
+
             }
         }
         //inserting to grid
@@ -165,23 +172,35 @@ public class GraphStructure {
             Coordinates transformed = aabb.center();
             transformed.setX((transformed.getX() - range_all.getLeft()) / cell_size);
             transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
-            grid.get((int)transformed.getY()).get((int)transformed.getX()).add(p);
+            int indexX = (int)transformed.getX();
+            int indexY = (int)transformed.getY();
+            grid.get(indexY).get(indexX).add(p);
+            grid_aabbs.get(indexY).get(indexX).add(aabb);
         }
         for(int i = 0; i < maxIdxY + 1; i++) {
             for(int ii = 0; ii < maxIdxX + 1; ii++) {
                 List<Property> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
+                List<AABB> potential_aabbs = new ArrayList<>(grid_aabbs.get(i).get(ii));
                 int ogSize = potential_neighbors.size();
                 if(i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii));
+                    potential_aabbs.addAll(grid_aabbs.get(i - 1).get(ii));
                 }
                 if(ii != 0) {
                     potential_neighbors.addAll(grid.get(i).get(ii - 1));
+                    potential_aabbs.addAll(grid_aabbs.get(i).get(ii - 1));
                 }
                 if(ii != 0 && i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii - 1));
+                    potential_aabbs.addAll(grid_aabbs.get(i - 1).get(ii - 1));
                 }
                 for (int p = 0; p < ogSize; p++) {
                     for (int pp = p + 1; pp < potential_neighbors.size(); pp++) {
+                        AABB aabb1 = potential_aabbs.get(p);
+                        AABB aabb2 = potential_aabbs.get(pp);
+                        if(!aabb1.isOverlapping(aabb2, threshold)) {
+                            continue;
+                        }
                         Property p1 = potential_neighbors.get(p);
                         Property p2 = potential_neighbors.get(pp);
                         if(areAdjacentByDistance(p1, p2)) {
@@ -200,7 +219,6 @@ public class GraphStructure {
         System.out.println(t + " neighbours ");
 
         //searching for neighbours
-            System.out.println("max prop size: " + max_prop_size);
         return g;
     }
 
