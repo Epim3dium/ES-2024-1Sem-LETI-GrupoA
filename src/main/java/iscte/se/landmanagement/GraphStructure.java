@@ -167,16 +167,40 @@ public class GraphStructure {
             transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
             grid.get((int)transformed.getY()).get((int)transformed.getX()).add(p);
         }
+        for(int i = 0; i < maxIdxY + 1; i++) {
+            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+                List<Property> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
+                int ogSize = potential_neighbors.size();
+                if(i != 0) {
+                    potential_neighbors.addAll(grid.get(i - 1).get(ii));
+                }
+                if(ii != 0) {
+                    potential_neighbors.addAll(grid.get(i).get(ii - 1));
+                }
+                if(ii != 0 && i != 0) {
+                    potential_neighbors.addAll(grid.get(i - 1).get(ii - 1));
+                }
+                for (int p = 0; p < ogSize; p++) {
+                    for (int pp = p + 1; pp < potential_neighbors.size(); pp++) {
+                        Property p1 = potential_neighbors.get(p);
+                        Property p2 = potential_neighbors.get(pp);
+                        if(areAdjacentByDistance(p1, p2)) {
+                            if(t % 100 == 0){
+                                System.out.println(t + " neighbours ");
+
+                            }
+                            t++;
+                            g.addEdge(p1, p2);
+                            addNeighbours(p1, p2);
+                        }
+                    }
                 }
             }
         }
-//        System.out.println(g.vertexSet());
-//
-//        System.out.println(g.edgeSet());
+        System.out.println(t + " neighbours ");
 
-        System.out.println(g.vertexSet().size());
-        System.out.println(g.edgeSet().size());
-
+        //searching for neighbours
+            System.out.println("max prop size: " + max_prop_size);
         return g;
     }
 
