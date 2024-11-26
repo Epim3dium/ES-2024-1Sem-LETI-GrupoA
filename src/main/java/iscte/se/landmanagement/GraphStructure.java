@@ -153,16 +153,12 @@ public class GraphStructure {
         double cell_size = max_prop_size;
         double maxIdxX = range_all.area().getX() / cell_size;
         double maxIdxY = range_all.area().getY() / cell_size;
-        List<List<List<Property>>> grid = new ArrayList<>();
-        List<List<List<AABB>>> grid_aabbs = new ArrayList<>();
+        List<List<List<Integer>>> grid = new ArrayList<>();
         //creating the grid
         for(int i = 0; i < maxIdxY + 1; i++) {
             grid.add(new ArrayList<>());
-            grid_aabbs.add(new ArrayList<>());
             for(int ii = 0; ii < maxIdxX + 1; ii++) {
                 grid.get(i).add(new ArrayList<>());
-                grid_aabbs.get(i).add(new ArrayList<>());
-
             }
         }
         //inserting to grid
@@ -174,35 +170,33 @@ public class GraphStructure {
             transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
             int indexX = (int)transformed.getX();
             int indexY = (int)transformed.getY();
-            grid.get(indexY).get(indexX).add(p);
-            grid_aabbs.get(indexY).get(indexX).add(aabb);
+            grid.get(indexY).get(indexX).add(i);
         }
         for(int i = 0; i < maxIdxY + 1; i++) {
             for(int ii = 0; ii < maxIdxX + 1; ii++) {
-                List<Property> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
-                List<AABB> potential_aabbs = new ArrayList<>(grid_aabbs.get(i).get(ii));
+                List<Integer> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
                 int ogSize = potential_neighbors.size();
                 if(i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii));
-                    potential_aabbs.addAll(grid_aabbs.get(i - 1).get(ii));
                 }
                 if(ii != 0) {
                     potential_neighbors.addAll(grid.get(i).get(ii - 1));
-                    potential_aabbs.addAll(grid_aabbs.get(i).get(ii - 1));
                 }
                 if(ii != 0 && i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii - 1));
-                    potential_aabbs.addAll(grid_aabbs.get(i - 1).get(ii - 1));
                 }
                 for (int p = 0; p < ogSize; p++) {
                     for (int pp = p + 1; pp < potential_neighbors.size(); pp++) {
-                        AABB aabb1 = potential_aabbs.get(p);
-                        AABB aabb2 = potential_aabbs.get(pp);
+                        Integer idxP = potential_neighbors.get(p);
+                        Integer idxPP = potential_neighbors.get(pp);
+
+                        AABB aabb1 = aabbs.get(idxP);
+                        AABB aabb2 = aabbs.get(idxPP);
                         if(!aabb1.isOverlapping(aabb2, threshold)) {
                             continue;
                         }
-                        Property p1 = potential_neighbors.get(p);
-                        Property p2 = potential_neighbors.get(pp);
+                        Property p1 = properties.get(idxP);
+                        Property p2 = properties.get(idxPP);
                         if(areAdjacentByDistance(p1, p2)) {
                             if(t % 100 == 0){
                                 System.out.println(t + " neighbours ");
