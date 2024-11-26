@@ -114,6 +114,8 @@ public class GraphStructure {
     }
 
 
+
+
     /**
      * Creates a graph where each vertex represents a `Property` object, and edges are added
      * between vertices if the corresponding properties are adjacent based on a defined distance condition.

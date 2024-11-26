@@ -29,6 +29,20 @@ public class Property {
         this.neighbors = new ArrayList<Property>();
     }
 
+    public Property(int ownerID, double areaSum) {
+        this.ownerID = ownerID;
+        this.parish = "";
+        this.municipality = "";
+        this.island = "";
+        this.parcelNum = 0;
+        this.parcelID = 0;
+        this.parcelNum = areaSum;
+        this.shapeLength = 0;
+        this.shapeArea = areaSum;
+        this.neighbors = new ArrayList<Property>();
+
+    }
+
     public int getPropertyID() {
         return propertyID;
     }
