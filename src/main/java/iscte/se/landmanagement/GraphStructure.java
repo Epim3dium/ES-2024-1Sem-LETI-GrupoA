@@ -2,6 +2,7 @@ package iscte.se.landmanagement;
 
 
 import com.mxgraph.swing.mxGraphComponent;
+import javafx.util.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -20,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.System.exit;
 
 
 public class GraphStructure {
@@ -123,33 +126,93 @@ public class GraphStructure {
      * @return
      */
     private Graph<Property, DefaultEdge> formGraph() {
+
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t=0;
         for (Property property : properties) {
-
             g.addVertex(property);
         }
+        double max_prop_size = 0.f;
+        List<AABB> aabbs = new ArrayList<>();
+        AABB range_all = new AABB();
+        int max_edges = 0;
+        for (Property property : properties) {
+            List<Coordinates> corners = property.getCorners();
+            AABB current = new AABB();
+            for ( Coordinates c : corners) {
+                current.expandToContain(c);
+                range_all.expandToContain(c);
+            }
+            max_edges = Math.max(max_edges, property.getCorners().size());
+            max_prop_size = Math.max(current.area().getX(), max_prop_size);
+            max_prop_size = Math.max(current.area().getY(), max_prop_size);
+            aabbs.add(current);
+        }
+        System.out.println("max edges: " + max_edges);
+
+        double cell_size = max_prop_size;
+        double maxIdxX = range_all.area().getX() / cell_size;
+        double maxIdxY = range_all.area().getY() / cell_size;
+        List<List<List<Integer>>> grid = new ArrayList<>();
+        //creating the grid
+        for(int i = 0; i < maxIdxY + 1; i++) {
+            grid.add(new ArrayList<>());
+            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+                grid.get(i).add(new ArrayList<>());
+            }
+        }
+        //inserting to grid
         for (int i = 0; i < properties.size(); i++) {
-            for (int j = i + 1; j < properties.size(); j++) {
-                Property p1 = properties.get(i);
-                Property p2 = properties.get(j);
+            AABB aabb = aabbs.get(i);
+            Property p = properties.get(i);
+            Coordinates transformed = aabb.center();
+            transformed.setX((transformed.getX() - range_all.getLeft()) / cell_size);
+            transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
+            int indexX = (int)transformed.getX();
+            int indexY = (int)transformed.getY();
+            grid.get(indexY).get(indexX).add(i);
+        }
+        for(int i = 0; i < maxIdxY + 1; i++) {
+            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+                List<Integer> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
+                int ogSize = potential_neighbors.size();
+                if(i != 0) {
+                    potential_neighbors.addAll(grid.get(i - 1).get(ii));
+                }
+                if(ii != 0) {
+                    potential_neighbors.addAll(grid.get(i).get(ii - 1));
+                }
+                if(ii != 0 && i != 0) {
+                    potential_neighbors.addAll(grid.get(i - 1).get(ii - 1));
+                }
+                for (int p = 0; p < ogSize; p++) {
+                    for (int pp = p + 1; pp < potential_neighbors.size(); pp++) {
+                        Integer idxP = potential_neighbors.get(p);
+                        Integer idxPP = potential_neighbors.get(pp);
 
+                        AABB aabb1 = aabbs.get(idxP);
+                        AABB aabb2 = aabbs.get(idxPP);
+                        if(!aabb1.isOverlapping(aabb2, threshold)) {
+                            continue;
+                        }
+                        Property p1 = properties.get(idxP);
+                        Property p2 = properties.get(idxPP);
+                        if(areAdjacentByDistance(p1, p2)) {
+                            if(t % 100 == 0){
+                                System.out.println(t + " neighbours ");
 
-                if (areAdjacentByDistance(p1, p2)){
-                    System.out.println(t+" ");
-                    t++;
-                    g.addEdge(p1, p2);
-                    addNeighbours(p1,p2);
+                            }
+                            t++;
+                            g.addEdge(p1, p2);
+                            addNeighbours(p1, p2);
+                        }
+                    }
                 }
             }
         }
-//        System.out.println(g.vertexSet());
-//
-//        System.out.println(g.edgeSet());
+        System.out.println(t + " neighbours ");
 
-        System.out.println(g.vertexSet().size());
-        System.out.println(g.edgeSet().size());
-
+        //searching for neighbours
         return g;
     }
 
