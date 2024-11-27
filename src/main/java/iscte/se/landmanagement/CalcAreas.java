@@ -2,14 +2,11 @@ package iscte.se.landmanagement;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
 
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CalcAreas {
 
@@ -27,15 +24,12 @@ public class CalcAreas {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g= new GraphStructure(propFileReader.getProperties(),1);
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
 
-        CalcAreas c=new CalcAreas(g.getG());
-        System.out.println(c.getAvgArea3("Calheta"));
+        CalcAreas c = new CalcAreas(g.getG());
+        System.out.println(c.calcArea4("Calheta","Municipio"));
 
     }
-
-
-
 
 
     private Graph<Property, DefaultEdge> graph;
@@ -47,73 +41,83 @@ public class CalcAreas {
     }
 
 
-    public double getAvgArea3(String areaT) {
+    public double getAvgArea3(String areaT, String areaType) {
         double sum = 0;
         double count = 0;
+
         for (Property p : graph.vertexSet()) {
-            if (p.getParish().equals(areaT) || p.getMunicipality().equals(areaT) || p.getIsland().equals(areaT)) {
+
+            if ((areaType.equals("Freguesia") && p.getParish().equals(areaT)) ||
+                    (areaType.equals("Municipio") && p.getMunicipality().equals(areaT)) ||
+                    (areaType.equals("Ilha") && p.getIsland().equals(areaT))) {
                 sum += p.getShapeArea();
                 count++;
             }
         }
-        System.out.println(sum);
-        System.out.println(count);
+
+        if (count == 0) {
+            throw new IllegalArgumentException("No properties found for the given area type and area name.");
+        }
+
         return sum / count;
     }
 
+   public double calcArea4(String input, String areaType) {
+        List<Property> filteredProperties=graph.vertexSet().stream().filter(property -> matchesLocal(property,input, areaType)).toList();
+        Set<Property> visited=new HashSet<>();
+        List<Double> aggregatedArea=new ArrayList<>();
 
+        for(Property property:filteredProperties){
+            if(!visited.contains(property)){
+                double totalA=exploreConnectedComp(graph,property,visited);
+                aggregatedArea.add(totalA);
 
-    public double getArea4(String areaT) {
-        List<DefaultEdge> edges= getNeighbours(areaT);
-        List<Property> sameIdVertices = mergeEdges(edges);
-        double sum=0;
-        double count=0;
-        for (Property p : graph.vertexSet()) {
-            if(!edges.contains(p)) {
-                sum += p.getShapeArea();
-                count++;
             }
         }
-        double avgArea1=sum/count;
-        double sum2=0;
-        double count2=0;
-        for (Property p : sameIdVertices) {
-            sum2+=p.getShapeArea();
-            count2++;
-        }
-        double avgArea2=sum2/count2;
 
-        return avgArea1+avgArea2;
+        double avg=aggregatedArea.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        return avg;
     }
 
-    public List<DefaultEdge> getNeighbours(String areaT) {
-        Map<Integer, List<Property>> groupedVertices = graph.vertexSet().stream().collect(Collectors.groupingBy(Property::getOwnerID));
+    private boolean matchesLocal(Property property, String areaT, String type) {
+         switch(type){
+             case "Freguesia":
+                 return property.getParish().equals(areaT);
+             case "Municipio":
+                 return property.getMunicipality().equals(areaT);
+             case "Ilha":
+                 return property.getIsland().equals(areaT);
+             default:
+                 return false;
+         }
 
-        List<DefaultEdge> edgesWithSameIdVertices = new ArrayList<>();
-        for (Map.Entry<Integer, List<Property>> entry : groupedVertices.entrySet()) {
-            List<Property> sameIdVertices = entry.getValue();
-            for (Property v : sameIdVertices) {
-                for (Property u : sameIdVertices) {
-                    if (graph.containsEdge(v, u)) {
-                        if(v.getIsland().equals(u.getIsland()) && v.getIsland().equals(areaT)) {
-                            edgesWithSameIdVertices.add(graph.getEdge(v, u));
-                        }
+    }
 
-                    }
+    private double exploreConnectedComp(Graph<Property, DefaultEdge> graph, Property property, Set<Property> visited) {
+        double totalArea=0;
+        Queue<Property> queue=new LinkedList<>();
+        queue.add(property);
+        visited.add(property);
+
+        while (!queue.isEmpty()) {
+            Property p = queue.poll();
+            totalArea+=p.getShapeArea();
+
+            for(DefaultEdge edge: graph.edgesOf(p)){
+                Property neighbor=graph.getEdgeTarget(edge);
+//                if(neighbor.equals(p)){
+//                    neighbor=graph.getEdgeSource(edge);
+//                }
+                if(!visited.contains(neighbor) && neighbor.getOwnerID() == p.getOwnerID()){
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+
                 }
             }
         }
 
-        return edgesWithSameIdVertices;
+        return totalArea;
     }
 
-    private List<Property> mergeEdges(List<DefaultEdge> edges) {
-        List<Property> sameIdVertices = new ArrayList<>();
-        for (DefaultEdge edge : edges) {
-            double AreaSum=graph.getEdgeSource(edge).getShapeArea()+graph.getEdgeTarget(edge).getShapeArea();
-            Property p = new Property(graph.getEdgeSource(edge).getOwnerID(),AreaSum);
-            sameIdVertices.add(p);
-        }
-        return sameIdVertices;
-    }
+
 }
