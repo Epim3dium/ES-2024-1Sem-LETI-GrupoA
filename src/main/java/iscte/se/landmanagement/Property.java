@@ -15,6 +15,7 @@ public class Property {
     private String island;
     private ArrayList<Property> neighbors;
 
+
     public Property(int propertyID, double parcelID, double parcelNum, double shapeLength, double shapeArea, ArrayList<Coordinates> corners, int ownerID, String parish, String municipality, String island) {
         this.propertyID = propertyID;
         this.parcelID = parcelID;
@@ -41,6 +42,20 @@ public class Property {
         this.shapeArea = areaSum;
         this.neighbors = new ArrayList<Property>();
 
+    }
+    @Override
+    public String toString() {
+        return propertyID + ", " + parish + ", " + municipality + ", " + island;
+    }
+    public boolean equals(Property obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return propertyID == ((Property) obj).propertyID;
+    }
+
+    @Override
+    public int hashCode() {
+        return propertyID;
     }
 
     public int getPropertyID() {

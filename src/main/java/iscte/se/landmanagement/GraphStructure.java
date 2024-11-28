@@ -45,7 +45,10 @@ public class GraphStructure {
         propFileReader.convertToPropertiy();
 
         GraphStructure g= new GraphStructure(propFileReader.getProperties(),1);
+        System.out.println(g.getG().vertexSet().size());
+        System.out.println(g.getG().edgeSet().size());
         //g.visualizeGraph();
+        g.visualizeGraph();
 
 
 
@@ -78,34 +81,11 @@ public class GraphStructure {
 //        frame.setVisible(true);
 
 
-
-
-
     }
 
-//    public void visualizeGraph() {
-//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>(this.graph);
-//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-//        layout.execute(graphAdapter.getDefaultParent());
-//
-//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
-//            @Override
-//            public void mouseWheelMoved(MouseWheelEvent e) {
-//                if (e.getWheelRotation() < 0) {
-//                    graphComponent.zoomIn();
-//                } else {
-//                    graphComponent.zoomOut();
-//                }
-//            }
-//        });
-//
-//        JFrame frame = new JFrame("Graph Visualization");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.add(graphComponent);
-//        frame.setSize(1400, 1400);
-//        frame.setVisible(true);
-//    }
+    public void visualizeGraph() {
+        Visualizer vis = new Visualizer(graph);
+    }
 
 
     public GraphStructure(ArrayList<Property> properties, int threshold) {
@@ -129,6 +109,9 @@ public class GraphStructure {
 
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t=0;
+        int sizeToRemove = properties.size() - 10000;
+        // Remove from the beginning for simplicity
+        properties.subList(0, sizeToRemove).clear();
         for (Property property : properties) {
             g.addVertex(property);
         }
