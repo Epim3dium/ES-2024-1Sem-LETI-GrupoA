@@ -44,7 +44,7 @@ public class GraphStructure {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g= new GraphStructure(propFileReader.getProperties(),1);
+        GraphStructure g= new GraphStructure(propFileReader.getProperties(),4);
         System.out.println(g.getG().vertexSet().size());
         System.out.println(g.getG().edgeSet().size());
         //g.visualizeGraph();
