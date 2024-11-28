@@ -8,10 +8,26 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import javax.swing.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
+import java.awt.*;
+import java.awt.event.*;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.TypeVariable;
+import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import static java.lang.Math.*;
 public class Visualizer extends JFrame {
     private Graph<Property, DefaultEdge> graph;
     Coordinates avg(ArrayList<Coordinates> coords) {
