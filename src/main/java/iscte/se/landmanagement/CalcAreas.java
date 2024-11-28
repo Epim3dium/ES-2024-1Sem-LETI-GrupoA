@@ -27,7 +27,8 @@ public class CalcAreas {
         GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
 
         CalcAreas c = new CalcAreas(g.getG());
-        System.out.println(c.calcArea4("Calheta","Municipio"));
+        System.out.println(c.calcArea3("Ponta do Sol","Freguesia"));
+        System.out.println(c.calcArea4("Ponta do Sol","Freguesia"));
 
     }
 
@@ -41,25 +42,15 @@ public class CalcAreas {
     }
 
 
-    public double getAvgArea3(String areaT, String areaType) {
+    public double calcArea3(String areaT, String areaType) {
+        List<Property> filteredProperties=graph.vertexSet().stream().filter(property -> matchesLocal(property,areaT, areaType)).toList();
         double sum = 0;
-        double count = 0;
 
-        for (Property p : graph.vertexSet()) {
+        for (Property p : filteredProperties) {
+            sum += p.getShapeArea();
 
-            if ((areaType.equals("Freguesia") && p.getParish().equals(areaT)) ||
-                    (areaType.equals("Municipio") && p.getMunicipality().equals(areaT)) ||
-                    (areaType.equals("Ilha") && p.getIsland().equals(areaT))) {
-                sum += p.getShapeArea();
-                count++;
-            }
         }
-
-        if (count == 0) {
-            throw new IllegalArgumentException("No properties found for the given area type and area name.");
-        }
-
-        return sum / count;
+        return sum / filteredProperties.size();
     }
 
    public double calcArea4(String input, String areaType) {

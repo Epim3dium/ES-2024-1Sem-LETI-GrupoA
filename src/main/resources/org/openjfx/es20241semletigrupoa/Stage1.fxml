@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.HelloController">
+   <children>
+      <Text layoutX="14.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to LandManagement">
+         <font>
+            <Font size="42.0" />
+         </font>
+      </Text>
+      <Button fx:id="button" layoutX="258.0" layoutY="157.0" mnemonicParsing="false" onMouseClicked="#readData" prefHeight="43.0" prefWidth="84.0" text="Read Data" />
+   </children>
+</AnchorPane>
