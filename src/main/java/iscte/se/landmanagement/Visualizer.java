@@ -101,27 +101,41 @@ public class Visualizer extends JFrame {
                 min.setY(min(min.getY(), pos.getY()));
             }
         }
+        public Coordinates transform(Coordinates pos) {
+            return new
+                    Coordinates(((pos.getX() - min.getX()) * scale) + offset.getX() * scale + this.getWidth() / 2,
+                    ((pos.getY() - min.getY()) * scale) + offset.getY() * scale + this.getHeight() / 2);
+        }
+        public void paintComponent(Graphics g) {
+            g.setColor(Color.BLUE);
+
+            for(Property p : graph.vertexSet()) {
+                if(drawOutlines) {
+                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
+                    for(Coordinates v : p.getCorners()) {
+                        Coordinates cur = transform(v);
+                        g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
+
+                        prev = cur;
                     }
                 }else {
-                    if (e.isShiftDown()) {
-                        // Horizontal scrolling
-                        component.getHorizontalScrollBar().setValue(
-                                component.getHorizontalScrollBar().getValue() + e.getWheelRotation() * 20
-                        );
-                    } else {
-                        // Vertical scrolling
-                        component.getVerticalScrollBar().setValue(
-                                component.getVerticalScrollBar().getValue() + e.getWheelRotation() * 20
-                        );
-                    }
+                    int radius = clamp((int)(40 * scale), 4, 10);
+                    Coordinates pos = transform(positions.get(p));
+                    g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
+                }
+
+            }
+            g.setColor(Color.RED);
+
+            for(Property p : graph.vertexSet()) {
+                Coordinates pos = transform(positions.get(p));
+                for (DefaultEdge edge : graph.edgesOf(p)) {
+                    Property neighbour = graph.getEdgeTarget(edge);
+                    Coordinates other = transform(positions.get(neighbour));
+                    g.drawLine((int) pos.getX(), (int) pos.getY(), (int) other.getX(), (int) other.getY());
                 }
             }
-        });
-// Display in a JFrame
-        JFrame frame = new JFrame("Neighbour Visualisation");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(component);
-        frame.setSize(400, 400);
-        frame.setVisible(true);
+        }
     }
+
 }
