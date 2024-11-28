@@ -28,37 +28,55 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import static java.lang.Math.*;
+
 public class Visualizer extends JFrame {
     private Graph<Property, DefaultEdge> graph;
-    Coordinates avg(ArrayList<Coordinates> coords) {
-        Coordinates result = new Coordinates(0, 0);
-        for (Coordinates coord : coords) {
-            result.setX(result.getX() + coord.getX());
-            result.setY(result.getY() + coord.getY());
-        }
-        result.setX(result.getX() / coords.size());
-        result.setY(result.getY() / coords.size());
-        return result;
-    }
+    JFrame frame = new JFrame();
+
     public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
         System.out.println("staring visualizer");
         // Create a JGraphT graph
         graph = inputGraph;
-// Create and add vertices
-        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>(graph);
+        frame.setSize(400, 400);
+        frame.setVisible(true);
+        DrawPane panel = new DrawPane(graph);
+        final Point dragPoint = new Point();
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                dragPoint.setLocation(e.getPoint());
+            }
+        });
+        panel.addMouseWheelListener(new MouseWheelListener() {
 
-// Apply a layout
-        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-        mxGraphComponent component = new mxGraphComponent(graphAdapter);
-        component.getGraphControl().addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.isControlDown()) {
-                    if (e.getWheelRotation() < 0) {
-                        component.zoomIn(); // Zoom in
-                    } else if(e.getWheelRotation() > 0) {
-                        component.zoomOut(); // Zoom out
+                panel.scale += e.getWheelRotation() * 0.001; // Positive for down, negative for up
+                panel.scale = clamp(panel.scale, 0.0, 1.0);
+                frame.repaint();
+
+            }
+        });
+
+        panel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                panel.offset.setX(panel.offset.getX() + (e.getX() - dragPoint.x) / panel.scale);
+                panel.offset.setY(panel.offset.getY() + (e.getY() - dragPoint.y) / panel.scale);
+                dragPoint.setLocation(e.getPoint());
+
+                System.out.println("drag point: " + panel.offset.getX() + ", " + panel.offset.getY());
+                frame.repaint();
+            }
+        });
+        frame.setContentPane(panel);
+
+        frame.setUndecorated(true);
+    }
+    class DrawPane extends JPanel {
+        Coordinates offset = new Coordinates(0, 0);
+        double scale = 1.0 / 200.0;
+        private boolean drawOutlines = false;
                     }
                 }else {
                     if (e.isShiftDown()) {
