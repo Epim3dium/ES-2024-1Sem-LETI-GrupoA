@@ -89,6 +89,18 @@ public class Visualizer extends JFrame {
             result.setY(result.getY() / coords.size());
             return result;
         }
+        private Graph<Property, DefaultEdge> graph;
+
+        public DrawPane(Graph<Property, DefaultEdge> inputGraph) {
+            graph = inputGraph;
+            System.out.println(graph.vertexSet().size());
+            for(Property p : graph.vertexSet()) {
+                Coordinates pos = avg(p.getCorners());
+                positions.put(p, pos);
+                min.setX(min(min.getX(), pos.getX()));
+                min.setY(min(min.getY(), pos.getY()));
+            }
+        }
                     }
                 }else {
                     if (e.isShiftDown()) {
