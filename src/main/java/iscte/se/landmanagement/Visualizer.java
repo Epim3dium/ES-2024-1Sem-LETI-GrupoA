@@ -77,6 +77,18 @@ public class Visualizer extends JFrame {
         Coordinates offset = new Coordinates(0, 0);
         double scale = 1.0 / 200.0;
         private boolean drawOutlines = false;
+        private Coordinates min = new Coordinates(1e10, 1e10);
+        private HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
+        Coordinates avg(ArrayList<Coordinates> coords) {
+            Coordinates result = new Coordinates(0, 0);
+            for (Coordinates coord : coords) {
+                result.setX(result.getX() + coord.getX());
+                result.setY(result.getY() + coord.getY());
+            }
+            result.setX(result.getX() / coords.size());
+            result.setY(result.getY() / coords.size());
+            return result;
+        }
                     }
                 }else {
                     if (e.isShiftDown()) {
