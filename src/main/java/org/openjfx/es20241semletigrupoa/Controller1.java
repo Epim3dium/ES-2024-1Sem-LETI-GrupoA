@@ -14,13 +14,6 @@ public class Controller1 {
     @FXML
     private Button button;
 
-    @FXML
-    void goBack(MouseEvent event) throws IOException {
-        Stage stage = (Stage) button.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Stage 1");
-        stage.setScene(scene);
-    }
+
 
 }
