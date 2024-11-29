@@ -71,7 +71,6 @@ public class Visualizer extends JFrame {
         });
         frame.setContentPane(panel);
 
-        frame.setUndecorated(true);
     }
     class DrawPane extends JPanel {
         Coordinates offset = new Coordinates(0, 0);
