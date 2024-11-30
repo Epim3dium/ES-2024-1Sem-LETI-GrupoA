@@ -13,22 +13,25 @@
     <maven.compiler.source>23</maven.compiler.source>
     <maven.compiler.target>23</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<junit.version>5.10.2</junit.version>  </properties>
+    <junit.version>5.10.2</junit.version> <!-- Define JUnit version -->
+  </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+    <!-- Opencsv Dependency -->
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <version>5.9</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
+
+    <!-- JTS Core Dependency -->
     <dependency>
       <groupId>org.locationtech.jts</groupId>
       <artifactId>jts-core</artifactId>
       <version>1.20.0</version>
     </dependency>
 
+    <!-- JGraphT Dependencies -->
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-ext</artifactId>
@@ -39,45 +42,16 @@
       <artifactId>jgrapht-core</artifactId>
       <version>1.5.2</version>
     </dependency>
+
+    <!-- MXGraph Dependency -->
     <dependency>
       <groupId>org.nasdanika.core</groupId>
       <artifactId>mxgraph</artifactId>
       <version>4.2.2</version>
     </dependency>
+
+    <!-- JUnit 5 Dependencies -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>17.0.12</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-fxml</artifactId>
-      <version>17.0.12</version>
-    </dependency>
-<dependency>
-      <groupId>com.dlsc.formsfx</groupId>
-      <artifactId>formsfx-core</artifactId>
-      <version>11.6.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.openjfx</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-<dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
@@ -89,11 +63,42 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
 
+    <!-- JavaFX Dependencies -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>17.0.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>17.0.12</version>
+    </dependency>
+
+    <!-- FormsFX Dependency (Excluding OpenJFX) -->
+    <dependency>
+      <groupId>com.dlsc.formsfx</groupId>
+      <artifactId>formsfx-core</artifactId>
+      <version>11.6.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.openjfx</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <!-- Compiler Plugin Configuration -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -101,16 +106,17 @@
         <configuration>
           <source>23</source>
           <target>23</target>
-            <compilerArgs>--enable-preview</compilerArgs>
+          <compilerArgs>--enable-preview</compilerArgs>
         </configuration>
       </plugin>
+
+      <!-- JavaFX Maven Plugin Configuration -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <executions>
           <execution>
-            <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
               <mainClass>org.openjfx.es20241semletigrupoa/org.openjfx.es20241semletigrupoa.HelloApplication</mainClass>
