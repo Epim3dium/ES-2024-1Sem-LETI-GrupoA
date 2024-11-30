@@ -24,11 +24,11 @@ public class CalcAreas {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
 
         CalcAreas c = new CalcAreas(g.getG());
-        System.out.println(c.calcArea3("Ponta do Sol","Freguesia"));
-        System.out.println(c.calcArea4("Ponta do Sol","Freguesia"));
+        System.out.println(c.calcArea3("Jardim do Mar","Freguesia"));
+        System.out.println(c.calcArea4("Jardim do Mar","Freguesia"));
 
     }
 
@@ -43,10 +43,13 @@ public class CalcAreas {
 
 
     public double calcArea3(String areaT, String areaType) {
+
         List<Property> filteredProperties=graph.vertexSet().stream().filter(property -> matchesLocal(property,areaT, areaType)).toList();
+
         double sum = 0;
 
         for (Property p : filteredProperties) {
+            System.out.println(p.getShapeArea());
             sum += p.getShapeArea();
 
         }
@@ -71,16 +74,12 @@ public class CalcAreas {
     }
 
     private boolean matchesLocal(Property property, String areaT, String type) {
-         switch(type){
-             case "Freguesia":
-                 return property.getParish().equals(areaT);
-             case "Municipio":
-                 return property.getMunicipality().equals(areaT);
-             case "Ilha":
-                 return property.getIsland().equals(areaT);
-             default:
-                 return false;
-         }
+        return switch (type) {
+            case "Freguesia" -> property.getParish().equals(areaT);
+            case "Municipio" -> property.getMunicipality().equals(areaT);
+            case "Ilha" -> property.getIsland().equals(areaT);
+            default -> false;
+        };
 
     }
 

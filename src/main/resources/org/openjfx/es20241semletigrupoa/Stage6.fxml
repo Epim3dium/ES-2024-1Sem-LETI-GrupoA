@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.HelloController">
+   <children>
+      <Label fx:id="labelA1" layoutX="110.0" layoutY="192.0" prefHeight="37.0" prefWidth="61.0" />
+      <Label fx:id="labelA2" layoutX="414.0" layoutY="192.0" prefHeight="37.0" prefWidth="61.0" />
+      <Button fx:id="A1" layoutX="99.0" layoutY="124.0" mnemonicParsing="false" onMouseClicked="#calcA1" prefHeight="45.0" prefWidth="83.0" text="Area 1" />
+      <Button fx:id="A2" layoutX="403.0" layoutY="124.0" mnemonicParsing="false" onAction="#calcA2" prefHeight="45.0" prefWidth="83.0" text="Area 2" />
+      <Text layoutX="172.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Get the Average Areas">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Text>
+      <Button fx:id="goBack5" layoutX="274.0" layoutY="315.0" mnemonicParsing="false" onMouseClicked="#goBack5" text="Go back" />
+   </children>
+</AnchorPane>
