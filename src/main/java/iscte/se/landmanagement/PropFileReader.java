@@ -36,8 +36,7 @@ public class PropFileReader {
         List<String[]> lines = new ArrayList<>();
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
 
-        try (Reader reader = Files.newBufferedReader(filePath);
-             CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(parser).build()) {
+        try (Reader reader = Files.newBufferedReader(filePath); CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(parser).build()) {
             csvReader.skip(1);
             String[] fileline;
             while ((fileline = csvReader.readNext()) != null) {
@@ -52,10 +51,7 @@ public class PropFileReader {
         if (line.contains("MULTIPOLYGON EMPTY")) {
             return coordinates;
         }
-        line = line.replace("MULTIPOLYGON", "")
-                .replace("(", "")
-                .replace(")", "")
-                .trim();
+        line = line.replace("MULTIPOLYGON", "").replace("(", "").replace(")", "").trim();
         String[] cornersCoordinates = line.split(",");
         for (int i = 0; i < cornersCoordinates.length; i++) {
 
@@ -77,18 +73,23 @@ public class PropFileReader {
             if (coords.isEmpty()) {
                 continue;
             }
+            if (lines.length == 10) {
+                int propertyId = Integer.parseInt(lines[0].trim());
+                double parcelId = Double.parseDouble(lines[1].trim());
+                double parcelNum = Double.parseDouble(lines[2].replace(',', '.').trim());
+                double shapeLength = Double.parseDouble(lines[3].trim());
+                double shapeArea = Double.parseDouble(lines[4].trim());
+                int ownerId = Integer.parseInt(lines[6].trim());
+                String parish = lines[7].trim();
+                String municipality = lines[8].trim();
+                String island = lines[9].trim();
 
-            int propertyId = Integer.parseInt(lines[0].trim());
-            double parcelId = Double.parseDouble(lines[1].trim());
-            double parcelNum = Double.parseDouble(lines[2].replace(',', '.').trim());
-            double shapeLength = Double.parseDouble(lines[3].trim());
-            double shapeArea = Double.parseDouble(lines[4].trim());
-            int ownerId = Integer.parseInt(lines[6].trim());
-            String parish = lines[7].trim();
-            String municipality = lines[8].trim();
-            String island = lines[9].trim();
+                properties.add(new Property(propertyId, parcelId, parcelNum, shapeLength, shapeArea, coords, ownerId, parish, municipality, island));
+            }else{
+                System.err.println("The file doesn't have the required size of columns");
+                System.exit(1);
+            }
 
-            properties.add(new Property(propertyId, parcelId, parcelNum, shapeLength, shapeArea, coords, ownerId, parish, municipality, island));
         }
     }
 }
