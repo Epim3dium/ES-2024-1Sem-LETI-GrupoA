@@ -207,8 +207,8 @@ public class GraphStructure {
     /**
      * Calculates the Euclidean distance between two points represented by {@link Coordinates}.
      *
-     * @param c1 c1 The first point as a `Coordinates` object.
-     * @param c2 c2 The second point as a `Coordinates` object.
+     * @param c1 c1 The first point as a {@link Coordinates} object.
+     * @param c2 c2 The second point as a {@link Coordinates} object.
      * @return The Euclidean distance between `c1` and `c2`.
      */
     public static double calculateDistance(Coordinates c1, Coordinates c2) {
