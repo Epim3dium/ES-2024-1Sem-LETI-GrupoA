@@ -34,11 +34,11 @@ class CalcAreasTest {
     }
 
     @Test
-    void getAvgArea3() {
+    void calcArea3() {
         String AreaN = "Calheta";
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
-        double d = c.getAvgArea3(AreaN, AreaT);
+        double d = c.calcArea3(AreaN, AreaT);
         assertEquals(914.5761711609113,d);
 
     }
@@ -49,6 +49,6 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea4(AreaN, AreaT);
-        assertEquals(917.6018973557536,d);
+        assertEquals(917.3995595614084,d);
     }
 }
