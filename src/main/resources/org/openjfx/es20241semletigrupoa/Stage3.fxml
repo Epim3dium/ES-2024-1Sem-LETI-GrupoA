@@ -6,15 +6,15 @@
 <?import javafx.scene.text.Text?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.HelloController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.AppInit">
    <children>
-      <Button fx:id="structure1" layoutX="116.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#getStructure1" prefHeight="46.0" prefWidth="130.0" text="Structure 1" />
-      <Button fx:id="structure2" layoutX="347.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#getStructure2" prefHeight="46.0" prefWidth="130.0" text="Structure 2" />
+      <Button fx:id="structure1Button" layoutX="116.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#getStructure1" prefHeight="46.0" prefWidth="130.0" text="Structure 1" />
+      <Button fx:id="structure2Button" layoutX="347.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#getStructure2" prefHeight="46.0" prefWidth="130.0" text="Structure 2" />
       <Text layoutX="140.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose structure or Calculate Areas" textAlignment="CENTER" wrappingWidth="319.7366943359375">
          <font>
             <Font size="35.0" />
          </font>
       </Text>
-      <Button fx:id="areas" layoutX="234.0" layoutY="258.0" mnemonicParsing="false" onMouseClicked="#calcAreas" prefHeight="46.0" prefWidth="130.0" text="Areas" />
+      <Button fx:id="AreasButton" layoutX="234.0" layoutY="258.0" mnemonicParsing="false" onMouseClicked="#goToAreas" prefHeight="46.0" prefWidth="130.0" text="Areas" />
    </children>
 </AnchorPane>

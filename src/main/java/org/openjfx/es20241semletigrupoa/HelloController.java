@@ -370,6 +370,7 @@ public class HelloController {
 
             // Clear downstream selections
             muniCB.getSelectionModel().clearSelection();
+
             parishCB.getSelectionModel().clearSelection();
             parishCB.getItems().clear();
 
