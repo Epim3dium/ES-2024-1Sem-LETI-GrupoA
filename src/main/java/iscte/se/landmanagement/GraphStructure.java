@@ -51,36 +51,6 @@ public class GraphStructure {
         g.visualizeGraph();
 
 
-
-//        JGraphXAdapter<Property, DefaultEdge> graphAdapter = new JGraphXAdapter<>((g.getG()));
-//
-//        mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-//        layout.execute(graphAdapter.getDefaultParent());
-//
-//
-//        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
-//
-//
-//        graphComponent.addMouseWheelListener(new MouseWheelListener() {
-//            @Override
-//            public void mouseWheelMoved(MouseWheelEvent e) {
-//                if (e.getWheelRotation() < 0) {
-//
-//                    graphComponent.zoomIn();
-//                } else {
-//
-//                    graphComponent.zoomOut();
-//                }
-//            }
-//        });
-//
-//        JFrame frame = new JFrame();
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.add(graphComponent);
-//        frame.setSize(1400, 1400);
-//        frame.setVisible(true);
-
-
     }
 
     public void visualizeGraph() {
@@ -111,7 +81,8 @@ public class GraphStructure {
         int t=0;
         int sizeToRemove = properties.size() - 10000;
         // Remove from the beginning for simplicity
-        properties.subList(0, sizeToRemove).clear();
+        properties.subList(sizeToRemove, properties.size()).clear();
+
         for (Property property : properties) {
             g.addVertex(property);
         }

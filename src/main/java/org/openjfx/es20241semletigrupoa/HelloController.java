@@ -85,9 +85,9 @@ public class HelloController {
 
     private static Map<String,String> location = new HashMap<>();
 
-    private PropFileReader propFileReader;
+    private static PropFileReader propFileReader;
 
-    //private GraphStructure structureO;
+    private GraphStructure structureO;
 
     private CalcAreas careas;
 
@@ -238,25 +238,9 @@ public class HelloController {
 
     @FXML
     void getStructure1(MouseEvent event) throws IOException {
-//        b=false;
-//        structureO=new GraphStructure(propFileReader.getProperties(),4);
-//        b=true;
-//        if(b) {
-//            Stage stage = (Stage) structure1.getScene().getWindow();
-//            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Stage4.fxml"));
-//            Scene scene = new Scene(fxmlLoader.load());
-//
-//            fxmlLoader.setController(this);
-//            this.setStage(stage);
-//
-//
-//            stage.setTitle("Stage 4");
-//            stage.setScene(scene);
-//            stage.show();
-//        }
-
-
-
+        b=false;
+        structureO=new GraphStructure(propFileReader.getProperties(),4);
+        structureO.visualizeGraph();
     }
 
     @FXML
@@ -478,13 +462,17 @@ public class HelloController {
         }
     }
 
-    public void goBack5(MouseEvent mouseEvent) throws IOException {
+    public void goBack5(MouseEvent mouseEvent) throws Exception {
         Stage stage = (Stage) goBack5.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Stage5.fxml"));
-//        fxmlLoader.setController(this);
+
         this.setStage(stage);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Stage 5");
         stage.setScene(scene);
+
+        rootPane=fxmlLoader.getRoot();
+
+        initCB();
     }
 }
