@@ -44,7 +44,7 @@ public class GraphStructure {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g= new GraphStructure(propFileReader.getProperties(),4);
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 20);
         System.out.println(g.getG().vertexSet().size());
         System.out.println(g.getG().edgeSet().size());
         //g.visualizeGraph();
@@ -60,17 +60,15 @@ public class GraphStructure {
 
     public GraphStructure(ArrayList<Property> properties, int threshold) {
         this.properties = properties;
-        this.threshold=threshold;
+        this.threshold = threshold;
         System.out.println("w");
         this.graph = formGraph();
 
     }
 
 
-
-
     /**
-     * Creates a graph where each vertex represents a `Property` object, and edges are added
+     * Creates a graph where each vertex represents a {@link Property}, and edges are added
      * between vertices if the corresponding properties are adjacent based on a defined distance condition.
      *
      * @return
@@ -78,7 +76,7 @@ public class GraphStructure {
     private Graph<Property, DefaultEdge> formGraph() {
 
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
-        int t=0;
+        int t = 0;
         int sizeToRemove = properties.size() - 10000;
         // Remove from the beginning for simplicity
         properties.subList(sizeToRemove, properties.size()).clear();
@@ -93,7 +91,7 @@ public class GraphStructure {
         for (Property property : properties) {
             List<Coordinates> corners = property.getCorners();
             AABB current = new AABB();
-            for ( Coordinates c : corners) {
+            for (Coordinates c : corners) {
                 current.expandToContain(c);
                 range_all.expandToContain(c);
             }
@@ -109,9 +107,9 @@ public class GraphStructure {
         double maxIdxY = range_all.area().getY() / cell_size;
         List<List<List<Integer>>> grid = new ArrayList<>();
         //creating the grid
-        for(int i = 0; i < maxIdxY + 1; i++) {
+        for (int i = 0; i < maxIdxY + 1; i++) {
             grid.add(new ArrayList<>());
-            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+            for (int ii = 0; ii < maxIdxX + 1; ii++) {
                 grid.get(i).add(new ArrayList<>());
             }
         }
@@ -122,21 +120,21 @@ public class GraphStructure {
             Coordinates transformed = aabb.center();
             transformed.setX((transformed.getX() - range_all.getLeft()) / cell_size);
             transformed.setY((transformed.getY() - range_all.getBottom()) / cell_size);
-            int indexX = (int)transformed.getX();
-            int indexY = (int)transformed.getY();
+            int indexX = (int) transformed.getX();
+            int indexY = (int) transformed.getY();
             grid.get(indexY).get(indexX).add(i);
         }
-        for(int i = 0; i < maxIdxY + 1; i++) {
-            for(int ii = 0; ii < maxIdxX + 1; ii++) {
+        for (int i = 0; i < maxIdxY + 1; i++) {
+            for (int ii = 0; ii < maxIdxX + 1; ii++) {
                 List<Integer> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
                 int ogSize = potential_neighbors.size();
-                if(i != 0) {
+                if (i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii));
                 }
-                if(ii != 0) {
+                if (ii != 0) {
                     potential_neighbors.addAll(grid.get(i).get(ii - 1));
                 }
-                if(ii != 0 && i != 0) {
+                if (ii != 0 && i != 0) {
                     potential_neighbors.addAll(grid.get(i - 1).get(ii - 1));
                 }
                 for (int p = 0; p < ogSize; p++) {
@@ -146,13 +144,13 @@ public class GraphStructure {
 
                         AABB aabb1 = aabbs.get(idxP);
                         AABB aabb2 = aabbs.get(idxPP);
-                        if(!aabb1.isOverlapping(aabb2, threshold)) {
+                        if (!aabb1.isOverlapping(aabb2, threshold)) {
                             continue;
                         }
                         Property p1 = properties.get(idxP);
                         Property p2 = properties.get(idxPP);
-                        if(areAdjacentByDistance(p1, p2)) {
-                            if(t % 100 == 0){
+                        if (areAdjacentByDistance(p1, p2)) {
+                            if (t % 100 == 0) {
                                 System.out.println(t + " neighbours ");
 
                             }
@@ -172,9 +170,10 @@ public class GraphStructure {
 
 
     /**
-     *Establishes a bidirectional neighbor relationship between two properties
-     * @param p1 p1 The first `Property` object.
-     * @param p2 p2 The second `Property` object.
+     * Establishes a bidirectional neighbor relationship between two properties
+     *
+     * @param p1 p1 The first {@link Property} object.
+     * @param p2 p2 The second {@link Property} object.
      */
     private void addNeighbours(Property p1, Property p2) {
         p1.addNeighbour(p2);
@@ -183,10 +182,11 @@ public class GraphStructure {
 
     /**
      * Determines if two properties are adjacent based on the distance between their corners.
-     * @param p1 p1 The first `Property` object to compare.
-     * @param p2 p2 The second `Property` object to compare.
+     *
+     * @param p1 p1 The first {@link Property} object to compare.
+     * @param p2 p2 The second {@link Property} object to compare.
      * @return `true` if the properties are adjacent (i.e., at least one pair of corners has a distance
-     *  *         less than or equal to the threshold), otherwise `false`.
+     * *         less than or equal to the threshold), otherwise `false`.
      */
     public boolean areAdjacentByDistance(Property p1, Property p2) {
         List<Coordinates> corners1 = p1.getCorners();
@@ -205,7 +205,8 @@ public class GraphStructure {
     }
 
     /**
-     * Calculates the Euclidean distance between two points represented by `Coordinates`.
+     * Calculates the Euclidean distance between two points represented by {@link Coordinates}.
+     *
      * @param c1 c1 The first point as a `Coordinates` object.
      * @param c2 c2 The second point as a `Coordinates` object.
      * @return The Euclidean distance between `c1` and `c2`.
@@ -216,14 +217,13 @@ public class GraphStructure {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public Graph<Property,DefaultEdge> getG(){
+    public Graph<Property, DefaultEdge> getG() {
         return this.graph;
     }
 
-
-
-
-
-
-
 }
+
+
+
+
+
