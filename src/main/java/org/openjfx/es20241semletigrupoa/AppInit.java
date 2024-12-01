@@ -94,7 +94,9 @@ public class AppInit {
     private void moveFileToResources(File file) {
         try {
             Path destination = Paths.get(RESOURCES_PATH, file.getName());
-            Files.copy(file.toPath(), destination);
+            if(!destination.toFile().exists()) {
+                Files.copy(file.toPath(), destination);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error moving file to resources directory", e);
         }
@@ -129,6 +131,10 @@ public class AppInit {
         }
     }
 
+
+    /**
+     * Navigates to Stage 5 and initializes combo boxes.
+     */
     @FXML
     void goToAreas(MouseEvent event) {
         navigateToScene("Stage5.fxml", "Stage 5");
@@ -254,6 +260,7 @@ public class AppInit {
 
     private void enableCalculateAreasButton() {
         nextButton = new Button("Next");
+        location=new HashMap<>();
         nextButton.setOnMouseClicked(event -> {
             location.putIfAbsent("Ilha",islandComboBox.getValue());
             location.putIfAbsent("Municipio",municipalityComboBox.getValue());
@@ -271,7 +278,7 @@ public class AppInit {
     }
 
     /**
-     * Calculates and displays areas.
+     * Calculates and displays area 1.
      */
     @FXML
     void calculateA1(MouseEvent event) {
@@ -285,9 +292,9 @@ public class AppInit {
 //            CalcAreas calcAreas = new CalcAreas(graphStructure.getG());
 
             if (Freguesia == null) {
-                areaResultLabel1.setText(String.valueOf(new CalcAreas(new GraphStructure(propFileReader.getProperties(), 4).getG()).calcArea3(Municipio, "Municipio")));
+                areaResultLabel1.setText(String.valueOf(calcAreas.calcArea3(Municipio, "Municipio")));
             } else {
-                areaResultLabel1.setText(String.valueOf(new CalcAreas(new GraphStructure(propFileReader.getProperties(), 4).getG()).calcArea3(Freguesia, "Freguesia")));
+                areaResultLabel1.setText(String.valueOf(calcAreas.calcArea3(Freguesia, "Freguesia")));
 
             }
         } catch (Exception e) {
@@ -295,6 +302,10 @@ public class AppInit {
         }
     }
 
+
+    /**
+     * Calculates and displays area 2.
+     */
     @FXML
     void calculateA2(MouseEvent event) {
 
@@ -304,9 +315,9 @@ public class AppInit {
             String Freguesia = location.get("Freguesia");
 
             if (Freguesia == null) {
-                areaResultLabel2.setText(String.valueOf(new CalcAreas(new GraphStructure(propFileReader.getProperties(), 4).getG()).calcArea4(Municipio, "Municipio")));
+                areaResultLabel2.setText(String.valueOf(calcAreas.calcArea4(Municipio, "Municipio")));
             } else {
-                areaResultLabel2.setText(String.valueOf(new CalcAreas(new GraphStructure(propFileReader.getProperties(), 4).getG()).calcArea4(Freguesia, "Freguesia")));
+                areaResultLabel2.setText(String.valueOf(calcAreas.calcArea4(Freguesia, "Freguesia")));
 
             }
         } catch (Exception e) {
@@ -324,6 +335,9 @@ public class AppInit {
         initializeComboBoxes();
     }
 
+    /**
+     * Handles navigation back to the previous scene.
+     */
     @FXML
     void goBack3(MouseEvent event) {
         navigateToScene("Stage3.fxml", "Stage 3");
