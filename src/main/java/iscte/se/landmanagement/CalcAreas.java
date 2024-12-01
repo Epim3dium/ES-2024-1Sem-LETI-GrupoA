@@ -27,8 +27,8 @@ public class CalcAreas {
         GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
 
         CalcAreas c = new CalcAreas(g.getG());
-        System.out.println(c.calcArea3("Jardim do Mar","Freguesia"));
-        System.out.println(c.calcArea4("Jardim do Mar","Freguesia"));
+        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
+        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
 
     }
 
@@ -41,10 +41,16 @@ public class CalcAreas {
 
     }
 
-
+    /**
+     * Calculates the Average Area of {@link Property} of a geographic area indicated by the user
+     *
+     * @param areaT    Name of the area that will be calculated
+     * @param areaType Type of the area that will be calculated (Parish/Municipality/Island)
+     * @return The Average Area of the {@link Property} considered in the case
+     */
     public double calcArea3(String areaT, String areaType) {
 
-        List<Property> filteredProperties=graph.vertexSet().stream().filter(property -> matchesLocal(property,areaT, areaType)).toList();
+        List<Property> filteredProperties = graph.vertexSet().stream().filter(property -> matchesLocal(property, areaT, areaType)).toList();
 
         double sum = 0;
 
@@ -56,20 +62,29 @@ public class CalcAreas {
         return sum / filteredProperties.size();
     }
 
-   public double calcArea4(String input, String areaType) {
-        List<Property> filteredProperties=graph.vertexSet().stream().filter(property -> matchesLocal(property,input, areaType)).toList();
-        Set<Property> visited=new HashSet<>();
-        List<Double> aggregatedArea=new ArrayList<>();
+    /**
+     * Calculates the Average Area of {@link Property} of  a geographic area indicated by user
+     * considering that if adjacent properties have the same owner, they are just one
+     *
+     * @param input    Name of the area that will be calculated
+     * @param areaType Type of the area that will be calculated (Parish/Municipality/Island)
+     * @return The Average Area of the {@link Property} considered in the case
+     */
 
-        for(Property property:filteredProperties){
-            if(!visited.contains(property)){
-                double totalA=exploreConnectedComp(graph,property,visited);
+    public double calcArea4(String input, String areaType) {
+        List<Property> filteredProperties = graph.vertexSet().stream().filter(property -> matchesLocal(property, input, areaType)).toList();
+        Set<Property> visited = new HashSet<>();
+        List<Double> aggregatedArea = new ArrayList<>();
+
+        for (Property property : filteredProperties) {
+            if (!visited.contains(property)) {
+                double totalA = exploreConnectedComp(graph, property, visited);
                 aggregatedArea.add(totalA);
 
             }
         }
 
-        double avg=aggregatedArea.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        double avg = aggregatedArea.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
         return avg;
     }
 
@@ -84,21 +99,21 @@ public class CalcAreas {
     }
 
     private double exploreConnectedComp(Graph<Property, DefaultEdge> graph, Property property, Set<Property> visited) {
-        double totalArea=0;
-        Queue<Property> queue=new LinkedList<>();
+        double totalArea = 0;
+        Queue<Property> queue = new LinkedList<>();
         queue.add(property);
         visited.add(property);
 
         while (!queue.isEmpty()) {
             Property p = queue.poll();
-            totalArea+=p.getShapeArea();
+            totalArea += p.getShapeArea();
 
-            for(DefaultEdge edge: graph.edgesOf(p)){
-                Property neighbor=graph.getEdgeTarget(edge);
+            for (DefaultEdge edge : graph.edgesOf(p)) {
+                Property neighbor = graph.getEdgeTarget(edge);
 //                if(neighbor.equals(p)){
 //                    neighbor=graph.getEdgeSource(edge);
 //                }
-                if(!visited.contains(neighbor) && neighbor.getOwnerID() == p.getOwnerID()){
+                if (!visited.contains(neighbor) && neighbor.getOwnerID() == p.getOwnerID()) {
                     visited.add(neighbor);
                     queue.add(neighbor);
 
