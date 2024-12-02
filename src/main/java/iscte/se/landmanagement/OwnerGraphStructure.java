@@ -14,6 +14,25 @@ public class OwnerGraphStructure {
     private Graph<Integer, DefaultEdge> graph;
     private ArrayList<Integer> owners;
 
+    public static void main(String[] args) throws Exception {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+        if (url == null) {
+            System.out.println("Arquivo CSV não encontrado!");
+            return;
+        }
+
+        Path path = Paths.get(url.toURI());
+        PropFileReader propFileReader = new PropFileReader(path);
+
+        propFileReader.readFile();
+        propFileReader.convertToPropertiy();
+
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 20);
+        OwnerGraphStructure og = new OwnerGraphStructure(g.getG());
+        //g.visualizeGraph();
+        og.visualizeGraph();
+    }
+
     public void visualizeGraph() {
         ;
     }
