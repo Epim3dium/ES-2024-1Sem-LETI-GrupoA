@@ -44,7 +44,7 @@ public class GraphStructure {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 20);
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
         System.out.println(g.getG().vertexSet().size());
         System.out.println(g.getG().edgeSet().size());
         //g.visualizeGraph();
@@ -52,9 +52,10 @@ public class GraphStructure {
 
 
     }
-
     public void visualizeGraph() {
-        Visualizer vis = new Visualizer(graph);
+        Visualizer.PositionCaller<Property> posCaller = (p) -> { return Coordinates.avg(p.getCorners()); };
+        Visualizer.OutlineCaller<Property> outlineCaller = Property::getCorners;
+        Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
     }
 
 
