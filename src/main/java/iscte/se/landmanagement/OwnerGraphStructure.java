@@ -8,11 +8,14 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class OwnerGraphStructure {
     private Graph<Integer, DefaultEdge> graph;
-    private ArrayList<Integer> owners;
+    private HashSet<Integer> owners;
+    private HashMap<Integer, List<Coordinates>> owners_positions;
 
     public static void main(String[] args) throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
@@ -35,6 +38,9 @@ public class OwnerGraphStructure {
 
     public void visualizeGraph() {
         ;
+        //Visualizer.PositionCaller<Integer> posCaller = (p) -> { return Coordinates.avg(owners_positions.get(p)); };
+        //Visualizer.OutlineCaller<Integer> outlineCaller = null;
+        //Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
     }
 
 
@@ -44,22 +50,33 @@ public class OwnerGraphStructure {
 
     private Graph<Integer, DefaultEdge> formGraph(Graph<Property, DefaultEdge> property_neighbours) {
         SimpleGraph<Integer, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
+        owners_positions = new HashMap<>();
+        owners = new HashSet<>();
 
         for(Property p : property_neighbours.vertexSet()) {
-            if(!g.containsVertex(p.getOwnerID())) {
-                g.addVertex(p.getOwnerID());
-            }
-            for(DefaultEdge e : property_neighbours.edgesOf(p)) {
-                Property neighbour = property_neighbours.getEdgeTarget(e);
-                if(!g.containsVertex(neighbour.getOwnerID())) {
-                    g.addVertex(neighbour.getOwnerID());
-                }
+            owners.add(p.getOwnerID());
 
-                if(!g.containsEdge(p.getOwnerID(), neighbour.getOwnerID())
-                        && !g.containsEdge(neighbour.getOwnerID(), p.getOwnerID())
-                        && neighbour.getOwnerID() != p.getOwnerID())
+            Integer owner = p.getOwnerID();
+            if(!g.containsVertex(p.getOwnerID())) {
+                g.addVertex(owner);
+                owners_positions.put(owner, new ArrayList<>());
+            }
+            owners_positions.get(owner).add(Coordinates.avg(p.getCorners()));
+
+            for(DefaultEdge e : property_neighbours.edgesOf(p)) {
+                Property neighbour_prop =property_neighbours.getEdgeTarget(e);
+                Integer neighbour = neighbour_prop.getOwnerID();
+                if(!g.containsVertex(neighbour)) {
+                    g.addVertex(neighbour);
+                    owners_positions.put(neighbour, new ArrayList<>());
+                }
+                owners_positions.get(neighbour).add(Coordinates.avg(neighbour_prop.getCorners()));
+
+                if(!g.containsEdge(owner, neighbour)
+                        && !g.containsEdge(neighbour, owner)
+                        && !neighbour.equals(owner))
                 {
-                    g.addEdge(p.getOwnerID(), neighbour.getOwnerID());
+                    g.addEdge(p.getOwnerID(), neighbour);
                 }
             }
         }
