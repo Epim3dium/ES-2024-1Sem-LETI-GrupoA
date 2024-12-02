@@ -1,8 +1,22 @@
 package iscte.se.landmanagement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Coordinates {
     private double x;
     private double y;
+
+    static Coordinates avg(List<Coordinates> coords) {
+        Coordinates result = new Coordinates(0, 0);
+        for (Coordinates coord : coords) {
+            result.setX(result.getX() + coord.getX());
+            result.setY(result.getY() + coord.getY());
+        }
+        result.setX(result.getX() / coords.size());
+        result.setY(result.getY() / coords.size());
+        return result;
+    }
 
     public Coordinates(double x, double y) {
         this.x = x;
