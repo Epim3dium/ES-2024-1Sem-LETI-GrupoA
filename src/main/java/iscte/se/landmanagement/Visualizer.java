@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,11 +30,22 @@ import javax.swing.SwingUtilities;
 
 import static java.lang.Math.*;
 
-public class Visualizer extends JFrame {
-    private Graph<Property, DefaultEdge> graph;
-    JFrame frame = new JFrame();
+public class Visualizer<T> extends JFrame {
+    public interface PositionCaller<T> {
+        Coordinates getPos(T data);
+    }
+    public interface OutlineCaller<T> {
+        List<Coordinates> getOutline(T data);
+    }
 
-    public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
+    private OutlineCaller<T> outlineDrawer;
+    private PositionCaller<T> positionCaller;
+    private Graph<T, DefaultEdge> graph;
+    private JFrame frame = new JFrame();
+
+    public Visualizer(Graph<T, DefaultEdge> inputGraph, PositionCaller<T> positionCaller, OutlineCaller<T> outliner) {
+        this.positionCaller = positionCaller;
+        this.outlineDrawer = outliner;
         System.out.println("staring visualizer");
         // Create a JGraphT graph
         graph = inputGraph;
@@ -77,24 +89,15 @@ public class Visualizer extends JFrame {
         double scale = 1.0 / 200.0;
         private boolean drawOutlines = false;
         private Coordinates min = new Coordinates(1e10, 1e10);
-        private HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
-        Coordinates avg(ArrayList<Coordinates> coords) {
-            Coordinates result = new Coordinates(0, 0);
-            for (Coordinates coord : coords) {
-                result.setX(result.getX() + coord.getX());
-                result.setY(result.getY() + coord.getY());
-            }
-            result.setX(result.getX() / coords.size());
-            result.setY(result.getY() / coords.size());
-            return result;
-        }
-        private Graph<Property, DefaultEdge> graph;
+        private HashMap<T, Coordinates> positions = new HashMap<T, Coordinates>();
 
-        public DrawPane(Graph<Property, DefaultEdge> inputGraph) {
+        private Graph<T, DefaultEdge> graph;
+
+        public DrawPane(Graph<T, DefaultEdge> inputGraph) {
             graph = inputGraph;
             System.out.println(graph.vertexSet().size());
-            for(Property p : graph.vertexSet()) {
-                Coordinates pos = avg(p.getCorners());
+            for(T p : graph.vertexSet()) {
+                Coordinates pos = positionCaller.getPos(p);//avg(p.getCorners());
                 positions.put(p, pos);
                 min.setX(min(min.getX(), pos.getX()));
                 min.setY(min(min.getY(), pos.getY()));
@@ -108,17 +111,17 @@ public class Visualizer extends JFrame {
         public void paintComponent(Graphics g) {
             g.setColor(Color.BLUE);
 
-            for(Property p : graph.vertexSet()) {
-                if(drawOutlines) {
-                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
-                    for(Coordinates v : p.getCorners()) {
+            for(T p : graph.vertexSet()) {
+                if(drawOutlines && outlineDrawer != null) {
+                    List<Coordinates> outline = outlineDrawer.getOutline(p);
+                    Coordinates prev = transform(outline.get(outline.size() - 1));
+                    for(Coordinates v : outline) {
                         Coordinates cur = transform(v);
                         g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
-
                         prev = cur;
                     }
                 }else {
-                    int radius = clamp((int)(40 * scale), 4, 10);
+                    int radius = clamp((int)(20 * scale), 4, 10);
                     Coordinates pos = transform(positions.get(p));
                     g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
                 }
@@ -126,10 +129,10 @@ public class Visualizer extends JFrame {
             }
             g.setColor(Color.RED);
 
-            for(Property p : graph.vertexSet()) {
+            for(T p : graph.vertexSet()) {
                 Coordinates pos = transform(positions.get(p));
                 for (DefaultEdge edge : graph.edgesOf(p)) {
-                    Property neighbour = graph.getEdgeTarget(edge);
+                    T neighbour = graph.getEdgeTarget(edge);
                     Coordinates other = transform(positions.get(neighbour));
                     g.drawLine((int) pos.getX(), (int) pos.getY(), (int) other.getX(), (int) other.getY());
                 }
