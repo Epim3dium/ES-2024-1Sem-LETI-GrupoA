@@ -10,27 +10,27 @@ import java.util.*;
 
 public class CalcAreas {
 
-    public static void main(String[] args) throws Exception {
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
-        if (url == null) {
-            System.out.println("Arquivo CSV não encontrado!");
-            return;
-        }
-
-        Path path = Paths.get(url.toURI());
-        PropFileReader propFileReader = new PropFileReader(path);
-
-        propFileReader.readFile();
-        propFileReader.convertToPropertiy();
-
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
-
-        CalcAreas c = new CalcAreas(g.getG());
-        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
-        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
-
-    }
+//    public static void main(String[] args) throws Exception {
+//
+//        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+//        if (url == null) {
+//            System.out.println("Arquivo CSV não encontrado!");
+//            return;
+//        }
+//
+//        Path path = Paths.get(url.toURI());
+//        PropFileReader propFileReader = new PropFileReader(path);
+//
+//        propFileReader.readFile();
+//        propFileReader.convertToPropertiy();
+//
+//        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
+//
+//        CalcAreas c = new CalcAreas(g.getG());
+//        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
+//        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
+//
+//    }
 
 
     private Graph<Property, DefaultEdge> graph;
@@ -52,13 +52,21 @@ public class CalcAreas {
 
         List<Property> filteredProperties = graph.vertexSet().stream().filter(property -> matchesLocal(property, areaT, areaType)).toList();
 
+
+        if(filteredProperties.isEmpty()) {
+            return 0;
+        }
         double sum = 0;
+
+
 
         for (Property p : filteredProperties) {
             System.out.println(p.getShapeArea());
             sum += p.getShapeArea();
 
         }
+
+
         return sum / filteredProperties.size();
     }
 

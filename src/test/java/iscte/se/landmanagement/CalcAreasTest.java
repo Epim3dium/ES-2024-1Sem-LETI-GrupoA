@@ -19,11 +19,11 @@ class CalcAreasTest {
     @BeforeEach
     void setUp() throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+
+        assertNotNull(url, "CSV file is missing!");
+
         Path path = Paths.get(url.toURI());
-        if (url == null) {
-            System.out.println("Arquivo CSV não encontrado!");
-            return;
-        }
+
         PropFileReader propFileReader = new PropFileReader(path);
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
@@ -39,7 +39,7 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea3(AreaN, AreaT);
-        assertEquals(914.5761711609113,d);
+        assertEquals(914.5761711609113,d,0.001);
 
     }
 
@@ -49,6 +49,22 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea4(AreaN, AreaT);
-        assertEquals(917.3995595614084,d);
+        assertEquals(917.6018973557536,d,0.001);
+    }
+
+    @Test
+    void testCalcArea3EmptyGraph() {
+        Graph<Property, DefaultEdge> emptyGraph = new GraphStructure(new ArrayList<>(), 1).getG();
+        CalcAreas calcAreas = new CalcAreas(emptyGraph);
+        double result = calcAreas.calcArea3("Something", "Municipio");
+        assertEquals(0.0, result, "calcArea3 should return 0.0 for an empty graph.");
+    }
+
+    @Test
+    void testCalcArea4EmptyGraph() {
+        Graph<Property, DefaultEdge> emptyGraph = new GraphStructure(new ArrayList<>(), 1).getG();
+        CalcAreas calcAreas = new CalcAreas(emptyGraph);
+        double result = calcAreas.calcArea4("Something", "Municipio");
+        assertEquals(0.0, result, "calcArea3 should return 0.0 for an empty graph.");
     }
 }

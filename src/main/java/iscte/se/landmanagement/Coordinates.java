@@ -8,6 +8,9 @@ public class Coordinates {
     private double y;
 
     static Coordinates avg(List<Coordinates> coords) {
+        if(coords.isEmpty() || coords==null){
+            throw new IllegalArgumentException("Coordinates list is empty");
+        }
         Coordinates result = new Coordinates(0, 0);
         for (Coordinates coord : coords) {
             result.setX(result.getX() + coord.getX());

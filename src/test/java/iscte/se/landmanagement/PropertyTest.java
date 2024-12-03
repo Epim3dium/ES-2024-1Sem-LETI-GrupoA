@@ -34,4 +34,35 @@ class PropertyTest {
         assertEquals(2, prop.getOwnerID());
     }
 
+    @Test
+    void testEquals() {
+        Property prop1 = new Property(1, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+        Property prop2 = new Property(1, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+        Property prop3 = new Property(2, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+
+        assertTrue(prop1.equals(prop2));
+        assertFalse(prop1.equals(prop3));
+    }
+
+    @Test
+    void testHashCode() {
+        Property prop1 = new Property(1, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+        Property prop2 = new Property(1, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+
+        assertEquals(prop1.hashCode(), prop2.hashCode());
+    }
+
+    @Test
+    void testAddAndGetNeighbours() {
+        Property prop1 = new Property(1, 2, 3, 4, 5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
+        Property prop2 = new Property(2, 3, 4, 5, 6, new ArrayList<>(), 7, "Ponta do Sol", "Ponta do Sol", "Madeira");
+
+        prop1.addNeighbour(prop2);
+
+        ArrayList<Property> neighbours = prop1.getNeighbours();
+        assertEquals(1, neighbours.size());
+        assertEquals(prop2, neighbours.get(0));
+    }
+
+
 }
