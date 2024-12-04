@@ -4,6 +4,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
+import java.net.PortUnreachableException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,9 +14,14 @@ import java.util.HashSet;
 import java.util.List;
 
 public class OwnerGraphStructure {
+
+
     private Graph<Integer, DefaultEdge> graph;
     private HashSet<Integer> owners;
     private HashMap<Integer, List<Coordinates>> owners_positions;
+
+
+    private Graph<Property, DefaultEdge> properties;
 
     public static void main(String[] args) throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
@@ -38,13 +44,14 @@ public class OwnerGraphStructure {
 
     public void visualizeGraph() {
         ;
-        //Visualizer.PositionCaller<Integer> posCaller = (p) -> { return Coordinates.avg(owners_positions.get(p)); };
-        //Visualizer.OutlineCaller<Integer> outlineCaller = null;
-        //Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
+        Visualizer.PositionCaller<Integer> posCaller = (p) -> { return Coordinates.avg(owners_positions.get(p)); };
+        Visualizer.OutlineCaller<Integer> outlineCaller = null;
+        Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
     }
 
 
     public OwnerGraphStructure(Graph<Property, DefaultEdge> property_neighbours) {
+        this.properties = property_neighbours;
         this.graph = formGraph(property_neighbours);
     }
 
@@ -81,5 +88,13 @@ public class OwnerGraphStructure {
             }
         }
         return g;
+    }
+
+    public Graph<Integer, DefaultEdge> getGraph() {
+        return graph;
+    }
+
+    public Graph<Property, DefaultEdge> getProperties() {
+        return properties;
     }
 }

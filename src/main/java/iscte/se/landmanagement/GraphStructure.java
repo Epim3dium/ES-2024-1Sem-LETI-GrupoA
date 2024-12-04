@@ -28,6 +28,9 @@ import static java.lang.System.exit;
 public class GraphStructure {
 
     private Graph<Property, DefaultEdge> graph;
+
+
+
     private ArrayList<Property> properties;
     private int threshold;
 
@@ -66,6 +69,8 @@ public class GraphStructure {
         this.graph = formGraph();
 
     }
+
+
 
 
     /**
@@ -217,6 +222,12 @@ public class GraphStructure {
 
     public Graph<Property, DefaultEdge> getG() {
         return this.graph;
+    }
+
+
+
+    public ArrayList<Property> getProperties() {
+        return properties;
     }
 
 }
