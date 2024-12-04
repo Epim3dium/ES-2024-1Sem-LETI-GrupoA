@@ -7,15 +7,20 @@ import org.jgrapht.graph.SimpleGraph;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class OwnerGraphStructure {
-    private Graph<Integer, DefaultEdge> graph;
+    static class NeighbourEdge extends DefaultEdge {
+        public void addPair(Property propery1, Property propery2) {
+            incidents.add(new PropertyPair(propery1, propery2));
+        }
+        private final ArrayList<PropertyPair> incidents;
+        public NeighbourEdge(Property propery1, Property propery2) {
+            incidents = new ArrayList<>();
+            addPair(propery1, propery2);        }
+    }
+    private Graph<Integer, NeighbourEdge> graph;
     private HashSet<Integer> owners;
-    private HashMap<Integer, List<Coordinates>> owners_positions;
 
     public static void main(String[] args) throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
@@ -30,7 +35,7 @@ public class OwnerGraphStructure {
         propFileReader.readFile();
         propFileReader.convertToPropertiy();
 
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 20);
+        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 2);
         OwnerGraphStructure og = new OwnerGraphStructure(g.getG());
         //g.visualizeGraph();
         og.visualizeGraph();
@@ -48,35 +53,35 @@ public class OwnerGraphStructure {
         this.graph = formGraph(property_neighbours);
     }
 
-    private Graph<Integer, DefaultEdge> formGraph(Graph<Property, DefaultEdge> property_neighbours) {
-        SimpleGraph<Integer, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
-        owners_positions = new HashMap<>();
+    private static void insertNew(Integer id, Graph<Integer, NeighbourEdge> g) {
+        if(!g.containsVertex(id)) {
+            g.addVertex(id);
+        }
+    }
+    private Graph<Integer, NeighbourEdge> formGraph(Graph<Property, DefaultEdge> property_neighbours) {
+        SimpleGraph<Integer, NeighbourEdge> g = new SimpleGraph<>(NeighbourEdge.class);
         owners = new HashSet<>();
 
         for(Property p : property_neighbours.vertexSet()) {
             owners.add(p.getOwnerID());
 
             Integer owner = p.getOwnerID();
-            if(!g.containsVertex(p.getOwnerID())) {
-                g.addVertex(owner);
-                owners_positions.put(owner, new ArrayList<>());
-            }
-            owners_positions.get(owner).add(Coordinates.avg(p.getCorners()));
+            insertNew(owner, g);
 
             for(DefaultEdge e : property_neighbours.edgesOf(p)) {
                 Property neighbour_prop =property_neighbours.getEdgeTarget(e);
                 Integer neighbour = neighbour_prop.getOwnerID();
-                if(!g.containsVertex(neighbour)) {
-                    g.addVertex(neighbour);
-                    owners_positions.put(neighbour, new ArrayList<>());
+                if(neighbour.equals(owner)) {
+                    continue;
                 }
-                owners_positions.get(neighbour).add(Coordinates.avg(neighbour_prop.getCorners()));
+                insertNew(neighbour, g);
 
-                if(!g.containsEdge(owner, neighbour)
-                        && !g.containsEdge(neighbour, owner)
-                        && !neighbour.equals(owner))
-                {
-                    g.addEdge(p.getOwnerID(), neighbour);
+                boolean edgeExists = g.containsEdge(owner, neighbour) || g.containsEdge(neighbour, owner);
+                if(!edgeExists) {
+                    g.addEdge(owner, neighbour, new NeighbourEdge(neighbour_prop, p));
+                }else {
+                    NeighbourEdge edge = g.getEdge(owner, neighbour);
+                    edge.addPair(neighbour_prop, p);
                 }
             }
         }
