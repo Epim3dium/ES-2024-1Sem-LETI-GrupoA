@@ -6,9 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -19,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AppInit {
 
@@ -28,9 +29,16 @@ public class AppInit {
     private static final String DEFAULT_FILE_NAME = "Madeira-Moodle-1.1.csv";
 
 
+
     // FXML Elements
+    @FXML private ListView listView;
+    @FXML private TextField OwID;
+    @FXML private Button Ex;
+    @FXML private TextField th;
+    @FXML private Button Sugg;
     @FXML private Button goBack5;
     @FXML private Button goBack3;
+    @FXML private Button goB3;
     @FXML private Button uploadButton;
     @FXML private Button nextButton;
     @FXML private Button calculateA1;
@@ -53,7 +61,9 @@ public class AppInit {
     private File selectedFile;
     private static PropFileReader propFileReader;
     private static GraphStructure graphStructure;
+    //private static OwnerGraphStructure OwgraphStructure;
     private static CalcAreas calcAreas;
+    private static OwnerGraphStruct JanGraph;
     private final static Map<String, Map<String, List<String>>> locationData = new HashMap<>();
     private static Map<String,String> location = new HashMap<>();
     private final Map<String, String> selectedLocation = new HashMap<>();
@@ -124,6 +134,9 @@ public class AppInit {
             propFileReader.convertToPropertiy();
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             calcAreas = new CalcAreas(graphStructure.getG());
+            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
+            //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
+            JanGraph=new OwnerGraphStruct(graphStructure.getG());
             buildLocationData();
             navigateToScene("Stage3.fxml", "Stage 3"); // Navigate to the next stage after processing the file
         } catch (Exception e) {
@@ -149,7 +162,7 @@ public class AppInit {
     @FXML
     void getStructure1(MouseEvent event) {
         try {
-            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
+
             graphStructure.visualizeGraph(); // Assuming visualizeGraph() visualizes structure
         } catch (Exception e) {
             throw new RuntimeException("Error visualizing structure 1", e);
@@ -161,9 +174,14 @@ public class AppInit {
      */
     @FXML
     void getStructure2(MouseEvent event) {
-        // Structure 2 functionality (if any) should be added here
-        System.out.println("Structure 2 clicked");
+        try {
+
+           JanGraph.visualizeGraph();
+        } catch (Exception e) {
+            throw new RuntimeException("Error visualizing structure 1", e);
+        }
     }
+
 
     /**
      * Builds the hierarchical location data.
@@ -357,6 +375,69 @@ public class AppInit {
         } catch (IOException e) {
             throw new RuntimeException("Error loading scene: " + fxmlFile, e);
         }
+    }
+
+
+    public void handleSugg(MouseEvent mouseEvent) {
+        navigateToScene("Stage7.fxml", "Stage 7");
+
+    }
+
+    public void listEx(MouseEvent mouseEvent) throws Exception {
+        int OwnerId = Integer.parseInt(OwID.getText());
+
+        //verify OwId
+
+//        PropExchange p=new PropExchange(JanGraph);
+//        HashMap<DefaultEdge, HashMap<Property, Property>> h=p.ManageUser(OwnerId,threshold);
+        ArrayList<String> s=new ArrayList<>();
+//        for(DefaultEdge i:h.keySet()){
+//            String ss="";
+//            if(OwgraphStructure.getGraph().getEdgeSource(i)==OwnerId){
+//                ss+="Change with neighbour " + OwgraphStructure.getGraph().getEdgeTarget(i);
+//            }else{
+//                ss+="Change with neighbour " + OwgraphStructure.getGraph().getEdgeSource(i);
+//            }
+//            HashMap<Property, Property> pp=h.get(i);
+//            for(Property l:pp.keySet()){
+//                ss+=" his land "+pp.get(l)+" for land "+l;
+//            }
+//            s.add(ss);
+//        }
+
+
+        List<OwnerGraphStruct.PropertyPair> exchanges = JanGraph.generateAllExchanges();
+        //System.out.println("total possible exchanges: " + exchanges.size());
+        JanGraph.sortExchangesByFitness(exchanges);
+
+        for (OwnerGraphStruct.PropertyPair pa:exchanges) {
+            String ss;
+            OwnerGraphStruct.PropertyPair pair = pa;
+            if(pair.getFirst().getOwnerID() == OwnerId || pair.getSecond().getOwnerID() == OwnerId) {
+
+                ss="Exchange between owners "+pair.getFirst().getOwnerID()+" and "+pair.getSecond().getOwnerID()+" ,lands " +pair.getFirst().getPropertyID()+" and "+pair.getSecond().getPropertyID()+" respectively";
+                s.add(ss);
+
+
+//                System.out.println("[" + pair.getFirst() + "] -> [" + pair.getSecond() + "]");
+//                System.out.println("\towners: " + pair.getFirst().getOwnerID() + " -> " + pair.getSecond().getOwnerID());
+//                System.out.println("\tareas:  " + pair.getFirst().getShapeArea() + " -> " + pair.getSecond().getShapeArea());
+            }
+
+        }
+
+
+
+
+
+
+        ObservableList<String> items = FXCollections.observableArrayList((s));
+
+        // Adicionar ao ListView
+        listView.setItems(items);
+
+
+        
     }
 }
 
