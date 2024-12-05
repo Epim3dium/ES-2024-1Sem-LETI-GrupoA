@@ -42,7 +42,7 @@ public class OwnerGraphStructure {
     private final double fitness_increase_coef = 1;
     private final double fitness_difference_coef = 1;
 
-    static class IslandMember {
+    private static class IslandMember {
         boolean isMiddle = false;
         int islandID = 0;
         boolean isLeaf = false;
@@ -53,7 +53,7 @@ public class OwnerGraphStructure {
         }
         public IslandMember() {}
     }
-    static class IslandInfo {
+    private static class IslandInfo {
         int count = 0;
         double sum = 0;
         double getAverage() {
@@ -186,7 +186,7 @@ public class OwnerGraphStructure {
         double second_island_increase = second_avg_aft - second_avg;
         return new Pair<>(first_island_icrease, second_island_increase);
     }
-    static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
+    private static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
         Pair<Double, Double> increase = calcAvgAreaIncrease(ogs, exchange);
         if(increase.getValue() < 0) { return 0;}
         if(increase.getKey() < 0) { return 0;}
@@ -198,7 +198,7 @@ public class OwnerGraphStructure {
         return avgIncrease - increaseFairness - difference;
     }
 
-    static class PairComparator implements Comparator<PropertyPair> {
+    private static class PairComparator implements Comparator<PropertyPair> {
         OwnerGraphStructure owner_graph_structure;
         public int compare(PropertyPair o1, PropertyPair o2) {
             double fit1 = exchangeFitness(owner_graph_structure, o1);
@@ -209,7 +209,7 @@ public class OwnerGraphStructure {
             owner_graph_structure = ogs;
         }
     }
-    void sortExchangesByFitness(List<PropertyPair> exchanges) {
+    private void sortExchangesByFitness(List<PropertyPair> exchanges) {
         Collections.sort(exchanges, new PairComparator(this));
     }
     List<PropertyPair> generateAllExchanges() {
@@ -234,7 +234,7 @@ public class OwnerGraphStructure {
         sortExchangesByFitness(result);
         return result;
     }
-    boolean checkIsMiddle(Property prop) {
+    private boolean checkIsMiddle(Property prop) {
         int total_count = 0;
         for(DefaultEdge e : neigbour_map.edgesOf(prop)) {
             Property other = neigbour_map.getEdgeTarget(e);
@@ -244,7 +244,7 @@ public class OwnerGraphStructure {
         }
         return total_count > 1;
     }
-    List<Property> searchOwnedNeighbours(Property prop, Set<Property> ban_list) {
+    private List<Property> searchOwnedNeighbours(Property prop, Set<Property> ban_list) {
         List<Property> result = new ArrayList<>();
         for(DefaultEdge e : neigbour_map.edgesOf(prop)) {
             Property other = neigbour_map.getEdgeTarget(e);
@@ -254,7 +254,7 @@ public class OwnerGraphStructure {
         }
         return result;
     }
-    void calcIslands(Map<Property, IslandMember> islands, Map<Integer, IslandInfo> island_owners) {
+    private void calcIslands(Map<Property, IslandMember> islands, Map<Integer, IslandInfo> island_owners) {
         Set<Property> computed = new HashSet<>();
         for(Property p : neigbour_map.vertexSet()) {
             if(computed.contains(p)){
