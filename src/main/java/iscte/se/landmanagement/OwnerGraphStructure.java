@@ -1,5 +1,6 @@
 package iscte.se.landmanagement;
 
+import javafx.util.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -34,8 +35,40 @@ public class OwnerGraphStructure {
     }
 
 
-    private Graph<Integer, NeighbourEdge> graph;
+    private final Graph<Integer, NeighbourEdge> graph;
+    private final Graph<Property, DefaultEdge> neigbour_map;
     private HashSet<Integer> owners;
+
+    private final double fitness_increase_coef = 1;
+    private final double fitness_difference_coef = 1;
+
+    static class IslandMember {
+        boolean isMiddle = false;
+        int islandID = 0;
+        boolean isLeaf = false;
+        public IslandMember(IslandMember info) {
+            isMiddle = info.isMiddle;
+            isLeaf = info.isLeaf;
+            islandID = info.islandID;
+        }
+        public IslandMember() {}
+    }
+    static class IslandInfo {
+        int count = 0;
+        double sum = 0;
+        double getAverage() {
+            return sum / count;
+        }
+        public IslandInfo(IslandInfo info) {
+            count = info.count;
+            sum = info.sum;
+        }
+        public IslandInfo() {}
+    }
+    private Map<Property, IslandMember> islands = new HashMap<>();
+    private Map<Integer, IslandInfo> owner_islands = new HashMap<>();
+
+    private Integer next_island = 0;
 
     public static void main(String[] args) throws Exception {
         URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
@@ -52,15 +85,22 @@ public class OwnerGraphStructure {
 
         GraphStructure g = new GraphStructure(propFileReader.getProperties(), 2);
         OwnerGraphStructure og = new OwnerGraphStructure(g.getG());
-        //g.visualizeGraph();
-        og.visualizeGraph();
+
         List<PropertyPair> exchanges = og.generateAllExchanges();
         System.out.println("total possible exchanges: " + exchanges.size());
-        sortExchangesByFitness(exchanges);
+        //leave only tail of exchanges
+        int head = exchanges.size() - 10;
+        for(int i = 0; i < head; i++) {
+            exchanges.removeFirst();
+        }
+        //display exchanges
         for (PropertyPair pair : exchanges) {
             System.out.println("[" + pair.first + "] -> [" + pair.second + "]");
             System.out.println("\towners: " + pair.first.getOwnerID() + " -> " + pair.second.getOwnerID());
             System.out.println("\tareas:  " + pair.first.getShapeArea() + " -> " + pair.second.getShapeArea());
+            //only for debugging
+            Pair<Double, Double> p = calcAvgAreaIncrease(og, pair);
+            System.out.println("\tarea increase:" + p.getKey() + " & " + p.getValue());
         }
     }
 
@@ -73,7 +113,9 @@ public class OwnerGraphStructure {
 
 
     public OwnerGraphStructure(Graph<Property, DefaultEdge> property_neighbours) {
+        this.neigbour_map = property_neighbours;
         this.graph = formGraph(property_neighbours);
+        calcIslands(this.islands, this.owner_islands);
     }
     private static void insertNew(Integer id, Graph<Integer, NeighbourEdge> g) {
         if(!g.containsVertex(id)) {
@@ -109,22 +151,66 @@ public class OwnerGraphStructure {
         }
         return g;
     }
-    static double exchangeFitness(PropertyPair exchange) {
-        return exchangeFitness(exchange, 1.0, 1.0);
+
+    static Pair<Double, Double> calcAvgAreaIncrease(OwnerGraphStructure ogs, PropertyPair exchange) {
+        Property first = exchange.first;
+        Property second = exchange.second;
+        IslandMember member_first = new IslandMember(ogs.islands.get(first));
+        IslandMember member_second = new IslandMember(ogs.islands.get(second));
+
+        IslandInfo island_first = new IslandInfo(ogs.owner_islands.get(first.getOwnerID()) );
+        IslandInfo island_second = new IslandInfo(ogs.owner_islands.get(second.getOwnerID()) );
+
+        assert(island_first != null);
+        assert(island_second != null);
+        assert(member_first != null);
+        assert(member_second != null);
+
+        double first_avg = island_first.getAverage();
+        double second_avg = island_second.getAverage();
+
+        if(member_first.isMiddle || member_first.isLeaf) {
+            island_first.count--;
+            assert(island_first.count != 0);
+        }
+        if(member_second.isMiddle || member_second.isLeaf) {
+            island_second.count--;
+            assert(island_second.count != 0);
+        }
+        island_first.sum += -first.getShapeArea() + second.getShapeArea();
+        island_second.sum += -second.getShapeArea() + first.getShapeArea();
+
+        double first_avg_aft = island_first.getAverage();
+        double second_avg_aft = island_second.getAverage();
+        double first_island_icrease = first_avg_aft - first_avg;
+        double second_island_increase = second_avg_aft - second_avg;
+        return new Pair<>(first_island_icrease, second_island_increase);
     }
-    static double exchangeFitness(PropertyPair exchange, double sizeCoef, double diffCoef) {
-        double avgSize = (exchange.first.getShapeArea() + exchange.second.getShapeArea()) / 2.0 * sizeCoef;
-        double difference = Math.pow(exchange.first.getShapeArea() - exchange.second.getShapeArea(), 2.0) * diffCoef;
-        return avgSize - difference;
+    static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
+        Pair<Double, Double> increase = calcAvgAreaIncrease(ogs, exchange);
+        if(increase.getValue() < 0) { return 0;}
+        if(increase.getKey() < 0) { return 0;}
+        double difference =
+                Math.pow(exchange.first.getShapeArea() - exchange.second.getShapeArea(), 2.0)
+                        * ogs.fitness_difference_coef;
+        double avgIncrease = (increase.getKey() + increase.getValue()) / 2.0 * ogs.fitness_increase_coef;
+        double increaseFairness = Math.abs(increase.getKey() - increase.getValue());
+        return avgIncrease - increaseFairness - difference;
     }
+
     static class PairComparator implements Comparator<PropertyPair> {
+        OwnerGraphStructure owner_graph_structure;
         public int compare(PropertyPair o1, PropertyPair o2) {
-            double fit1 = exchangeFitness(o1), fit2 = exchangeFitness(o2);
+            double fit1 = exchangeFitness(owner_graph_structure, o1);
+            double fit2 = exchangeFitness(owner_graph_structure, o2);
             return Double.compare(fit1, fit2);
         }
+        public PairComparator(OwnerGraphStructure ogs) {
+            owner_graph_structure = ogs;
+        }
     }
-    static void sortExchangesByFitness(List<PropertyPair> exchanges) {
-        Collections.sort(exchanges, new PairComparator());
+    void sortExchangesByFitness(List<PropertyPair> exchanges) {
+        Collections.sort(exchanges, new PairComparator(this));
     }
     List<PropertyPair> generateAllExchanges() {
         ArrayList<PropertyPair> result = new ArrayList<>();
@@ -145,6 +231,63 @@ public class OwnerGraphStructure {
                 }
             }
         }
+        sortExchangesByFitness(result);
         return result;
+    }
+    boolean checkIsMiddle(Property prop) {
+        int total_count = 0;
+        for(DefaultEdge e : neigbour_map.edgesOf(prop)) {
+            Property other = neigbour_map.getEdgeTarget(e);
+            if(other.getOwnerID() == prop.getOwnerID()) {
+                total_count++;
+            }
+        }
+        return total_count > 1;
+    }
+    List<Property> searchOwnedNeighbours(Property prop, Set<Property> ban_list) {
+        List<Property> result = new ArrayList<>();
+        for(DefaultEdge e : neigbour_map.edgesOf(prop)) {
+            Property other = neigbour_map.getEdgeTarget(e);
+            if(other.getOwnerID() == prop.getOwnerID() && !ban_list.contains(other)) {
+                result.add(other);
+            }
+        }
+        return result;
+    }
+    void calcIslands(Map<Property, IslandMember> islands, Map<Integer, IslandInfo> island_owners) {
+        Set<Property> computed = new HashSet<>();
+        for(Property p : neigbour_map.vertexSet()) {
+            if(computed.contains(p)){
+                continue;
+            }
+            Queue<Property> to_compute = new LinkedList<>();
+            to_compute.add(p);
+            int cur_island = this.next_island++;
+            IslandInfo info = new IslandInfo();
+            while(!to_compute.isEmpty()) {
+
+                Property current = to_compute.poll();
+                if(computed.contains(current)) {
+                    continue;
+                }
+                computed.add(current);
+
+                IslandMember member = new IslandMember();
+                member.islandID = cur_island;
+                member.isMiddle = checkIsMiddle(p);
+
+                info.count ++;
+                info.sum += current.getShapeArea();
+                List<Property> others = searchOwnedNeighbours(current, computed);
+                to_compute.addAll(others);
+                if(others.isEmpty() && p == current) {
+                    member.isLeaf = true;
+                }
+                islands.put(current, member);
+            }
+            island_owners.putIfAbsent(p.getOwnerID(), new IslandInfo());
+            island_owners.get(p.getOwnerID()).count += info.count;
+            island_owners.get(p.getOwnerID()).sum += info.sum;
+        }
     }
 }
