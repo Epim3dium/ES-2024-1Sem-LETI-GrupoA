@@ -22,6 +22,11 @@ public class OwnerGraphStructure {
 
         Property first;
         Property second;
+        public void swap() {
+            Property temp = first;
+            first = second;
+            second = temp;
+        }
         PropertyPair(Property first, Property second) {
             if(first.getOwnerID() > second.getOwnerID()) {
                 this.first = first;

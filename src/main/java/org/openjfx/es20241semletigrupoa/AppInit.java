@@ -381,15 +381,23 @@ public class AppInit {
 
         ArrayList<String> s=new ArrayList<>();
         List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
-        for (OwnerGraphStructure.PropertyPair pa:exchanges) {
-            String ss;
-            OwnerGraphStructure.PropertyPair pair = pa;
-            if(pair.getFirst().getOwnerID() == OwnerId || pair.getSecond().getOwnerID() == OwnerId) {
-
-                ss="Exchange between owners "+pair.getFirst().getOwnerID()+" and "+pair.getSecond().getOwnerID()+" ,lands " +pair.getFirst().getPropertyID()+" and "+pair.getSecond().getPropertyID()+" respectively";
-                s.add(ss);
-
+        //filter
+        for(int i = 0; i < exchanges.size(); i++) {
+            OwnerGraphStructure.PropertyPair pair = exchanges.get(i);
+            if (pair.getFirst().getOwnerID() != OwnerId) {
+                pair.swap();
             }
+            if (pair.getFirst().getOwnerID() != OwnerId) {
+                exchanges.remove(i);
+                i--;
+            }
+        }
+        exchanges = exchanges.subList(0, 7);
+
+        for (OwnerGraphStructure.PropertyPair pair:exchanges) {
+            String ss;
+            ss="Exchange between owners "+ pair.getFirst().getOwnerID()+" and "+ pair.getSecond().getOwnerID()+" ,lands " + pair.getFirst().getPropertyID()+" and "+ pair.getSecond().getPropertyID()+" respectively";
+            s.add(ss);
 
         }
         ObservableList<String> items = FXCollections.observableArrayList((s));
