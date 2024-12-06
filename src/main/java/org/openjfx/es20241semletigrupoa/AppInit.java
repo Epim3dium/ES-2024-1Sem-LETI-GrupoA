@@ -1,16 +1,22 @@
 package org.openjfx.es20241semletigrupoa;
 
 import iscte.se.landmanagement.*;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +34,38 @@ public class AppInit {
     private static final String RESOURCES_PATH = "src/main/resources/";
     private static final String DEFAULT_FILE_NAME = "Madeira-Moodle-1.1.csv";
 
+    private static class Record {
+        private int ranking = 0;
+        private int otherOwner = 0;
+        private int myProperty = 0;
+        private int otherProperty = 0;
+        private double myAreaInc = 0;
+        private double otherAreaInc = 0;
 
+        final public double getMyAreaInc() {return myAreaInc;}
+        final public double getOtherAreaInc() {return otherAreaInc;}
+        final public int getRanking() {return ranking;}
+        final public int getOtherOwner() { return otherOwner;}
+        final public int getMyProperty() { return myProperty;}
+        final public int getOtherProperty() { return otherProperty;}
+        Record(int ranking, int otherOwner, int myProperty, int otherProperty, double myAreaInc, double otherAreaInc) {
+            this.ranking = ranking;
+            this.otherOwner = otherOwner;
+            this.myProperty = myProperty;
+            this.otherProperty = otherProperty;
+            this.myAreaInc = myAreaInc;
+            this.otherAreaInc = otherAreaInc;
+        }
+    };
 
     // FXML Elements
-    @FXML private ListView listView;
+    @FXML private TableView<Record> tableView;
+    @FXML private TableColumn<Record, Integer> otherOwnerColumn;
+    @FXML private TableColumn<Record, Integer> myPropertyColumn;
+    @FXML private TableColumn<Record, Integer> otherPropertyColumn;
+    @FXML private TableColumn<Record, Integer> rankColumn;
+    @FXML private TableColumn<Record, Double> areaIncColumn;
+    @FXML private TableColumn<Record, Double> otherIncColumn;
     @FXML private TextField OwID;
     @FXML private Button Ex;
     @FXML private Button Sugg;
@@ -354,6 +388,43 @@ public class AppInit {
         navigateToScene("Stage3.fxml", "Stage 3");
     }
 
+    @FXML
+    public void initialize() {
+        try {
+            otherOwnerColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Integer>, ObservableValue<Integer>>() {
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Record, Integer> p) {
+                    return new SimpleIntegerProperty(p.getValue().getOtherOwner()).asObject();
+                }
+            });
+            myPropertyColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Integer>, ObservableValue<Integer>>() {
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Record, Integer> p) {
+                    return new SimpleIntegerProperty(p.getValue().getMyProperty()).asObject();
+                }
+            });
+            otherPropertyColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Integer>, ObservableValue<Integer>>() {
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Record, Integer> p) {
+                    return new SimpleIntegerProperty(p.getValue().getOtherProperty()).asObject();
+                }
+            });
+            rankColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Integer>, ObservableValue<Integer>>() {
+                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Record, Integer> p) {
+                    return new SimpleIntegerProperty(p.getValue().getRanking()).asObject();
+                }
+            });
+            areaIncColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Double>, ObservableValue<Double>>() {
+                public ObservableValue<Double> call(TableColumn.CellDataFeatures<Record, Double> p) {
+                    return new SimpleDoubleProperty(p.getValue().getMyAreaInc()).asObject();
+                }
+            });
+            otherIncColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, Double>, ObservableValue<Double>>() {
+                public ObservableValue<Double> call(TableColumn.CellDataFeatures<Record, Double> p) {
+                    return new SimpleDoubleProperty(p.getValue().getOtherAreaInc()).asObject();
+                }
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
     /**
      * Generic method to handle scene navigation.
      */
@@ -379,7 +450,9 @@ public class AppInit {
     public void listEx(MouseEvent mouseEvent) throws Exception {
         int OwnerId = Integer.parseInt(OwID.getText());
 
-        ArrayList<String> s=new ArrayList<>();
+
+
+        ArrayList<Record> s=new ArrayList<>();
         List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
         //filter
         for(int i = 0; i < exchanges.size(); i++) {
@@ -392,19 +465,16 @@ public class AppInit {
                 i--;
             }
         }
-        exchanges = exchanges.subList(0, 7);
-
+        int i = 1;
         for (OwnerGraphStructure.PropertyPair pair:exchanges) {
-            String ss;
-            ss="Exchange between owners "+ pair.getFirst().getOwnerID()+" and "+ pair.getSecond().getOwnerID()+" ,lands " + pair.getFirst().getPropertyID()+" and "+ pair.getSecond().getPropertyID()+" respectively";
-            s.add(ss);
-
+            Pair<Double, Double> increases= OwnerGraphStructure.calcAvgAreaIncrease(ownerGraphStructure, pair);
+            if(increases.getValue() < 0 || increases.getKey() < 0)
+                continue;
+            Record r = new Record(i++, pair.getSecond().getOwnerID(), pair.getFirst().getPropertyID(), pair.getSecond().getPropertyID(), increases.getKey(), increases.getValue());
+            s.add(r);
         }
-        ObservableList<String> items = FXCollections.observableArrayList((s));
-        listView.setItems(items);
-
-
-        
+        ObservableList<Record> items = FXCollections.observableArrayList(s);
+        tableView.setItems(items);
     }
 }
 
