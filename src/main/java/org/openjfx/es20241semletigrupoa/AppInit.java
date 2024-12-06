@@ -34,7 +34,6 @@ public class AppInit {
     @FXML private ListView listView;
     @FXML private TextField OwID;
     @FXML private Button Ex;
-    @FXML private TextField th;
     @FXML private Button Sugg;
     @FXML private Button goBack5;
     @FXML private Button goBack3;
@@ -54,16 +53,15 @@ public class AppInit {
     @FXML private Button structure2Button;
     @FXML private Button AreasButton;
 
-    // Other Fields
+
 
     private FXMLLoader fxmlLoader;
     private Stage stage;
     private File selectedFile;
     private static PropFileReader propFileReader;
     private static GraphStructure graphStructure;
-    //private static OwnerGraphStructure OwgraphStructure;
     private static CalcAreas calcAreas;
-    private static OwnerGraphStructure JanGraph;
+    private static OwnerGraphStructure ownerGraphStructure;
     private final static Map<String, Map<String, List<String>>> locationData = new HashMap<>();
     private static Map<String,String> location = new HashMap<>();
     private final Map<String, String> selectedLocation = new HashMap<>();
@@ -136,7 +134,7 @@ public class AppInit {
             calcAreas = new CalcAreas(graphStructure.getG());
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
-            JanGraph=new OwnerGraphStructure(graphStructure.getG());
+            ownerGraphStructure =new OwnerGraphStructure(graphStructure.getG());
             buildLocationData();
             navigateToScene("Stage3.fxml", "Stage 3"); // Navigate to the next stage after processing the file
         } catch (Exception e) {
@@ -176,7 +174,7 @@ public class AppInit {
     void getStructure2(MouseEvent event) {
         try {
 
-           JanGraph.visualizeGraph();
+           ownerGraphStructure.visualizeGraph();
         } catch (Exception e) {
             throw new RuntimeException("Error visualizing structure 1", e);
         }
@@ -192,13 +190,13 @@ public class AppInit {
             String municipality = property.getMunicipality();
             String parish = property.getParish();
 
-            // Add island if not present
+
             locationData.putIfAbsent(island, new HashMap<>());
 
-            // Add municipality to the island if not present
+
             locationData.get(island).putIfAbsent(municipality, new ArrayList<>());
 
-            // Add parish to the municipality if not already in the list
+
             if (!locationData.get(island).get(municipality).contains(parish)) {
                 locationData.get(island).get(municipality).add(parish);
             }
@@ -291,8 +289,6 @@ public class AppInit {
 
         rootPane.getChildren().add(nextButton);
 
-//        graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
-//        calcAreas = new CalcAreas(graphStructure.getG());
     }
 
     /**
@@ -305,9 +301,6 @@ public class AppInit {
             String Ilha = location.get("Ilha");
             String Municipio = location.get("Municipio");
             String Freguesia = location.get("Freguesia");
-
-//            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
-//            CalcAreas calcAreas = new CalcAreas(graphStructure.getG());
 
             if (Freguesia == null) {
                 areaResultLabel1.setText(String.valueOf(calcAreas.calcArea3(Municipio, "Municipio")));
@@ -386,30 +379,9 @@ public class AppInit {
     public void listEx(MouseEvent mouseEvent) throws Exception {
         int OwnerId = Integer.parseInt(OwID.getText());
 
-        //verify OwId
-
-//        PropExchange p=new PropExchange(JanGraph);
-//        HashMap<DefaultEdge, HashMap<Property, Property>> h=p.ManageUser(OwnerId,threshold);
         ArrayList<String> s=new ArrayList<>();
-//        for(DefaultEdge i:h.keySet()){
-//            String ss="";
-//            if(OwgraphStructure.getGraph().getEdgeSource(i)==OwnerId){
-//                ss+="Change with neighbour " + OwgraphStructure.getGraph().getEdgeTarget(i);
-//            }else{
-//                ss+="Change with neighbour " + OwgraphStructure.getGraph().getEdgeSource(i);
-//            }
-//            HashMap<Property, Property> pp=h.get(i);
-//            for(Property l:pp.keySet()){
-//                ss+=" his land "+pp.get(l)+" for land "+l;
-//            }
-//            s.add(ss);
-//        }
-
-
-        List<OwnerGraphStructure.PropertyPair> exchanges = JanGraph.generateAllExchanges();
-        //System.out.println("total possible exchanges: " + exchanges.size());
-        JanGraph.sortExchangesByFitness(exchanges);
-
+        List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
+        ownerGraphStructure.sortExchangesByFitness(exchanges);
         for (OwnerGraphStructure.PropertyPair pa:exchanges) {
             String ss;
             OwnerGraphStructure.PropertyPair pair = pa;
@@ -418,22 +390,10 @@ public class AppInit {
                 ss="Exchange between owners "+pair.getFirst().getOwnerID()+" and "+pair.getSecond().getOwnerID()+" ,lands " +pair.getFirst().getPropertyID()+" and "+pair.getSecond().getPropertyID()+" respectively";
                 s.add(ss);
 
-
-//                System.out.println("[" + pair.getFirst() + "] -> [" + pair.getSecond() + "]");
-//                System.out.println("\towners: " + pair.getFirst().getOwnerID() + " -> " + pair.getSecond().getOwnerID());
-//                System.out.println("\tareas:  " + pair.getFirst().getShapeArea() + " -> " + pair.getSecond().getShapeArea());
             }
 
         }
-
-
-
-
-
-
         ObservableList<String> items = FXCollections.observableArrayList((s));
-
-        // Adicionar ao ListView
         listView.setItems(items);
 
 

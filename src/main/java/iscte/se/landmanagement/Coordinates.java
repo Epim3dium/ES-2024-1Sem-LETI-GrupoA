@@ -8,9 +8,6 @@ public class Coordinates {
     private double y;
 
     static Coordinates avg(List<Coordinates> coords) {
-        if(coords.isEmpty() || coords==null){
-            throw new IllegalArgumentException("Coordinates list is empty");
-        }
         Coordinates result = new Coordinates(0, 0);
         for (Coordinates coord : coords) {
             result.setX(result.getX() + coord.getX());
@@ -45,5 +42,19 @@ public class Coordinates {
     @Override
     public String toString() {
         return "Coordinates:" + "x-> " + x + ", y-> " + y + " " ;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Coordinates coords = (Coordinates) obj;
+        if(coords.x != this.x) {
+            return false;
+        }
+        return coords.y == this.y;
     }
 }
