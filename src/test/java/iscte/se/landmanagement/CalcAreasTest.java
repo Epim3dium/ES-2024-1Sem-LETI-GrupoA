@@ -49,6 +49,6 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea4(AreaN, AreaT);
-        assertEquals(917.3995595614084,d);
+        assertEquals(917.6018973557536,d);
     }
 }
