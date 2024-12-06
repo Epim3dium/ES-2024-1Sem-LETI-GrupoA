@@ -36,7 +36,12 @@ public class Visualizer extends JFrame {
     private Graph<Property, DefaultEdge> graph;
     private JFrame frame = new JFrame();
     private Integer highlightedOwner = null;
-
+    private OwnerGraphStructure.PropertyPair highlightedExchange = null;
+    private boolean showOnlyHighlighted = false;
+    public void setHighlightedExchange(OwnerGraphStructure.PropertyPair highlightedExchange) {
+        this.highlightedExchange = highlightedExchange;
+        this.showOnlyHighlighted = true;
+    }
     public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
 
         System.out.println("staring visualizer");
@@ -154,13 +159,15 @@ public class Visualizer extends JFrame {
                 if(pos.getX() < -padding || pos.getY() < -padding || pos.getX() > this.getWidth() + padding || pos.getY() > this.getHeight() + padding) {
                     continue;
                 }
-                boolean isHighlighted = highlightedOwner != null && p.getOwnerID() == highlightedOwner;
+                boolean isHighlighted =
+                        (highlightedOwner != null && p.getOwnerID() == highlightedOwner) ||
+                                (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
                 if(isHighlighted) {
                     g.setColor(Color.MAGENTA);
                 }else {
                     g.setColor(Color.BLUE);
-
                 }
+                if(showOnlyHighlighted && !isHighlighted) { continue; }
                 if(drawOutlines) {
                     Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
                     for(Coordinates v : p.getCorners()) {
@@ -185,6 +192,11 @@ public class Visualizer extends JFrame {
 
 
             for(Property p : graph.vertexSet()) {
+                boolean isHighlighted =
+                        (highlightedOwner != null && p.getOwnerID() == highlightedOwner) ||
+                                (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
+                if(showOnlyHighlighted && !isHighlighted) { continue; }
+
                 Coordinates pos = transform(positions.get(p));
                 for (DefaultEdge edge : graph.edgesOf(p)) {
                     Property neighbour = graph.getEdgeTarget(edge);

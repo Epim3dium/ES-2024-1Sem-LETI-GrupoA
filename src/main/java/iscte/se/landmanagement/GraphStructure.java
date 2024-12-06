@@ -55,6 +55,10 @@ public class GraphStructure {
 
 
     }
+    public void visualizeGraph(OwnerGraphStructure.PropertyPair to_highlight) {
+        Visualizer vis = new Visualizer(graph);
+        vis.setHighlightedExchange(to_highlight);
+    }
     public void visualizeGraph() {
         Visualizer vis = new Visualizer(graph);
     }
