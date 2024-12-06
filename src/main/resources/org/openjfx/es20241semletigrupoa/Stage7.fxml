@@ -7,7 +7,16 @@
    <children>
       <TextField fx:id="OwID" layoutX="225.0" layoutY="33.0" promptText="Insert Owner ID" />
       <Button fx:id="Ex" layoutX="249.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#listEx" text="Get suggestions" />
-      <ListView fx:id="listView" layoutX="84.0" layoutY="115.0" prefHeight="198.0" prefWidth="432.0" />
+      <TableView fx:id="tableView" layoutX="84.0" layoutY="115.0" prefHeight="198.0" prefWidth="432.0">
+         <columns>
+            <TableColumn text="Rank" fx:id="rankColumn" />
+            <TableColumn text="Other Owner" fx:id="otherOwnerColumn" />
+            <TableColumn text="My Property" fx:id="myPropertyColumn" />
+            <TableColumn text="Other Property" fx:id="otherPropertyColumn" />
+            <TableColumn text="Avg Area Increase" fx:id="areaIncColumn" />
+            <TableColumn text="Others Avg Area Increase" fx:id="otherIncColumn" />
+         </columns>
+      </TableView>
       <Button fx:id="goB3" layoutX="270.0" layoutY="329.0" mnemonicParsing="false" onMouseClicked="#goBack3" text="Go Back" />
    </children>
 </AnchorPane>
