@@ -129,9 +129,6 @@ public class CalcAreas {
 
             for (DefaultEdge edge : graph.edgesOf(p)) {
                 Property neighbor = graph.getEdgeTarget(edge);
-//                if(neighbor.equals(p)){
-//                    neighbor=graph.getEdgeSource(edge);
-//                }
                 if (!visited.contains(neighbor) && neighbor.getOwnerID() == p.getOwnerID()) {
                     visited.add(neighbor);
                     queue.add(neighbor);
