@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class OwnerGraphStruct {
+public class OwnerGraphStructure {
     public static class PropertyPair {
         public Property getSecond() {
             return second;
@@ -92,7 +92,7 @@ public class OwnerGraphStruct {
         propFileReader.convertToPropertiy();
 
         GraphStructure g = new GraphStructure(propFileReader.getProperties(), 2);
-        OwnerGraphStruct og = new OwnerGraphStruct(g.getG());
+        OwnerGraphStructure og = new OwnerGraphStructure(g.getG());
 
         List<PropertyPair> exchanges = og.generateAllExchanges();
         System.out.println("total possible exchanges: " + exchanges.size());
@@ -120,7 +120,7 @@ public class OwnerGraphStruct {
     }
 
 
-    public OwnerGraphStruct(Graph<Property, DefaultEdge> property_neighbours) {
+    public OwnerGraphStructure(Graph<Property, DefaultEdge> property_neighbours) {
         this.neigbour_map = property_neighbours;
         this.graph = formGraph(property_neighbours);
         calcIslands(this.islands, this.owner_islands);
@@ -160,7 +160,7 @@ public class OwnerGraphStruct {
         return g;
     }
 
-    static Pair<Double, Double> calcAvgAreaIncrease(OwnerGraphStruct ogs, PropertyPair exchange) {
+    static Pair<Double, Double> calcAvgAreaIncrease(OwnerGraphStructure ogs, PropertyPair exchange) {
         Property first = exchange.first;
         Property second = exchange.second;
         IslandMember member_first = new IslandMember(ogs.islands.get(first));
@@ -194,7 +194,7 @@ public class OwnerGraphStruct {
         double second_island_increase = second_avg_aft - second_avg;
         return new Pair<>(first_island_icrease, second_island_increase);
     }
-    private static double exchangeFitness(OwnerGraphStruct ogs, PropertyPair exchange) {
+    private static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
         Pair<Double, Double> increase = calcAvgAreaIncrease(ogs, exchange);
         if(increase.getValue() < 0) { return 0;}
         if(increase.getKey() < 0) { return 0;}
@@ -207,13 +207,13 @@ public class OwnerGraphStruct {
     }
 
     private static class PairComparator implements Comparator<PropertyPair> {
-        OwnerGraphStruct owner_graph_structure;
+        OwnerGraphStructure owner_graph_structure;
         public int compare(PropertyPair o1, PropertyPair o2) {
             double fit1 = exchangeFitness(owner_graph_structure, o1);
             double fit2 = exchangeFitness(owner_graph_structure, o2);
             return Double.compare(fit1, fit2);
         }
-        public PairComparator(OwnerGraphStruct ogs) {
+        public PairComparator(OwnerGraphStructure ogs) {
             owner_graph_structure = ogs;
         }
     }

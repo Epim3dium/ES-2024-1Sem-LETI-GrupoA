@@ -63,7 +63,7 @@ public class AppInit {
     private static GraphStructure graphStructure;
     //private static OwnerGraphStructure OwgraphStructure;
     private static CalcAreas calcAreas;
-    private static OwnerGraphStruct JanGraph;
+    private static OwnerGraphStructure JanGraph;
     private final static Map<String, Map<String, List<String>>> locationData = new HashMap<>();
     private static Map<String,String> location = new HashMap<>();
     private final Map<String, String> selectedLocation = new HashMap<>();
@@ -136,7 +136,7 @@ public class AppInit {
             calcAreas = new CalcAreas(graphStructure.getG());
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
-            JanGraph=new OwnerGraphStruct(graphStructure.getG());
+            JanGraph=new OwnerGraphStructure(graphStructure.getG());
             buildLocationData();
             navigateToScene("Stage3.fxml", "Stage 3"); // Navigate to the next stage after processing the file
         } catch (Exception e) {
@@ -406,13 +406,13 @@ public class AppInit {
 //        }
 
 
-        List<OwnerGraphStruct.PropertyPair> exchanges = JanGraph.generateAllExchanges();
+        List<OwnerGraphStructure.PropertyPair> exchanges = JanGraph.generateAllExchanges();
         //System.out.println("total possible exchanges: " + exchanges.size());
         JanGraph.sortExchangesByFitness(exchanges);
 
-        for (OwnerGraphStruct.PropertyPair pa:exchanges) {
+        for (OwnerGraphStructure.PropertyPair pa:exchanges) {
             String ss;
-            OwnerGraphStruct.PropertyPair pair = pa;
+            OwnerGraphStructure.PropertyPair pair = pa;
             if(pair.getFirst().getOwnerID() == OwnerId || pair.getSecond().getOwnerID() == OwnerId) {
 
                 ss="Exchange between owners "+pair.getFirst().getOwnerID()+" and "+pair.getSecond().getOwnerID()+" ,lands " +pair.getFirst().getPropertyID()+" and "+pair.getSecond().getPropertyID()+" respectively";
