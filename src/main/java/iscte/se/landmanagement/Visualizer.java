@@ -30,22 +30,14 @@ import javax.swing.SwingUtilities;
 
 import static java.lang.Math.*;
 
-public class Visualizer<T> extends JFrame {
-    public interface PositionCaller<T> {
-        Coordinates getPos(T data);
-    }
-    public interface OutlineCaller<T> {
-        List<Coordinates> getOutline(T data);
-    }
+public class Visualizer extends JFrame {
 
-    private OutlineCaller<T> outlineDrawer;
-    private PositionCaller<T> positionCaller;
-    private Graph<T, DefaultEdge> graph;
+
+    private Graph<Property, DefaultEdge> graph;
     private JFrame frame = new JFrame();
 
-    public Visualizer(Graph<T, DefaultEdge> inputGraph, PositionCaller<T> positionCaller, OutlineCaller<T> outliner) {
-        this.positionCaller = positionCaller;
-        this.outlineDrawer = outliner;
+    public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
+
         System.out.println("staring visualizer");
         // Create a JGraphT graph
         graph = inputGraph;
@@ -64,7 +56,7 @@ public class Visualizer<T> extends JFrame {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 panel.scale += e.getWheelRotation() * 0.001; // Positive for down, negative for up
-                panel.scale = clamp(panel.scale, 0.0, 1.0);
+                panel.scale = clamp(panel.scale, 0.0, 3.0);
                 frame.repaint();
 
             }
@@ -82,22 +74,45 @@ public class Visualizer<T> extends JFrame {
             }
         });
         frame.setContentPane(panel);
-
+        JButton button = new JButton("Show Outlines");
+        panel.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Action to be performed when the button is clicked
+                panel.drawOutlines = !panel.drawOutlines;
+                panel.revalidate();
+                panel.repaint();            }
+        });
+        button = new JButton("Hide Labels");
+        panel.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Action to be performed when the button is clicked
+                panel.hideLabels = !panel.hideLabels;
+                panel.revalidate();
+                panel.repaint();            }
+        });
+        panel.revalidate();
+        panel.repaint();
     }
+
     class DrawPane extends JPanel {
         Coordinates offset = new Coordinates(0, 0);
         double scale = 1.0 / 200.0;
-        private boolean drawOutlines = false;
+        public boolean drawOutlines = false;
+        public boolean hideLabels = false;
         private Coordinates min = new Coordinates(1e10, 1e10);
-        private HashMap<T, Coordinates> positions = new HashMap<T, Coordinates>();
+        private HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
 
-        private Graph<T, DefaultEdge> graph;
+        private Graph<Property, DefaultEdge> graph;
 
-        public DrawPane(Graph<T, DefaultEdge> inputGraph) {
+        public DrawPane(Graph<Property, DefaultEdge> inputGraph) {
             graph = inputGraph;
             System.out.println(graph.vertexSet().size());
-            for(T p : graph.vertexSet()) {
-                Coordinates pos = positionCaller.getPos(p);//avg(p.getCorners());
+            for(Property p : graph.vertexSet()) {
+                Coordinates pos = Coordinates.avg(p.getCorners());
                 positions.put(p, pos);
                 min.setX(min(min.getX(), pos.getX()));
                 min.setY(min(min.getY(), pos.getY()));
@@ -111,28 +126,39 @@ public class Visualizer<T> extends JFrame {
         public void paintComponent(Graphics g) {
             g.setColor(Color.BLUE);
 
-            for(T p : graph.vertexSet()) {
-                if(drawOutlines && outlineDrawer != null) {
-                    List<Coordinates> outline = outlineDrawer.getOutline(p);
-                    Coordinates prev = transform(outline.get(outline.size() - 1));
-                    for(Coordinates v : outline) {
+            for(Property p : graph.vertexSet()) {
+                Coordinates pos = transform(positions.get(p));
+                float padding = 10.f;
+                if(pos.getX() < -padding || pos.getY() < -padding || pos.getX() > this.getWidth() + padding || pos.getY() > this.getHeight() + padding) {
+                    continue;
+                }
+                if(drawOutlines) {
+                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
+                    for(Coordinates v : p.getCorners()) {
                         Coordinates cur = transform(v);
                         g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
                         prev = cur;
                     }
                 }else {
                     int radius = clamp((int)(20 * scale), 4, 10);
-                    Coordinates pos = transform(positions.get(p));
                     g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
+                }
+                if( scale > 1.0 && !hideLabels) {
+                    g.drawString("ID:" + p.getPropertyID(), (int)pos.getX(), (int)pos.getY());
+                    if(scale > 1.5) {
+                        g.drawString("Own:" + p.getOwnerID(), (int)pos.getX(), (int)pos.getY() + g.getFontMetrics().getAscent());
+
+                    }
                 }
 
             }
             g.setColor(Color.RED);
 
-            for(T p : graph.vertexSet()) {
+
+            for(Property p : graph.vertexSet()) {
                 Coordinates pos = transform(positions.get(p));
                 for (DefaultEdge edge : graph.edgesOf(p)) {
-                    T neighbour = graph.getEdgeTarget(edge);
+                    Property neighbour = graph.getEdgeTarget(edge);
                     Coordinates other = transform(positions.get(neighbour));
                     g.drawLine((int) pos.getX(), (int) pos.getY(), (int) other.getX(), (int) other.getY());
                 }
