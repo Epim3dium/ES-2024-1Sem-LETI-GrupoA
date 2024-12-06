@@ -36,23 +36,19 @@ public class AppInit {
 
     private static class Record {
         private int ranking = 0;
-        private int otherOwner = 0;
-        private int myProperty = 0;
-        private int otherProperty = 0;
+        private OwnerGraphStructure.PropertyPair exchange;
         private double myAreaInc = 0;
         private double otherAreaInc = 0;
 
         final public double getMyAreaInc() {return myAreaInc;}
         final public double getOtherAreaInc() {return otherAreaInc;}
         final public int getRanking() {return ranking;}
-        final public int getOtherOwner() { return otherOwner;}
-        final public int getMyProperty() { return myProperty;}
-        final public int getOtherProperty() { return otherProperty;}
-        Record(int ranking, int otherOwner, int myProperty, int otherProperty, double myAreaInc, double otherAreaInc) {
+        final public int getOtherOwner() { return exchange.getSecond().getOwnerID();}
+        final public int getMyProperty() { return exchange.getFirst().getPropertyID();}
+        final public int getOtherProperty() { return exchange.getSecond().getPropertyID();}
+        Record(int ranking, OwnerGraphStructure.PropertyPair exchange, double myAreaInc, double otherAreaInc) {
             this.ranking = ranking;
-            this.otherOwner = otherOwner;
-            this.myProperty = myProperty;
-            this.otherProperty = otherProperty;
+            this.exchange = exchange;
             this.myAreaInc = myAreaInc;
             this.otherAreaInc = otherAreaInc;
         }
@@ -166,7 +162,6 @@ public class AppInit {
             propFileReader.convertToPropertiy();
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             calcAreas = new CalcAreas(graphStructure.getG());
-            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
             ownerGraphStructure =new OwnerGraphStructure(graphStructure.getG());
             buildLocationData();
@@ -421,6 +416,16 @@ public class AppInit {
                     return new SimpleDoubleProperty(p.getValue().getOtherAreaInc()).asObject();
                 }
             });
+            tableView.setRowFactory(tv -> {
+                TableRow<Record> row = new TableRow<>();
+                row.setOnMouseClicked(event -> {
+                    if (!row.isEmpty() && event.getClickCount() == 1) { // Single-click
+                        Record clickedRecord = row.getItem();
+                        graphStructure.visualizeGraph(clickedRecord.exchange);
+                    }
+                });
+                return row;
+            });
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -470,7 +475,7 @@ public class AppInit {
             Pair<Double, Double> increases= OwnerGraphStructure.calcAvgAreaIncrease(ownerGraphStructure, pair);
             if(increases.getValue() < 0 || increases.getKey() < 0)
                 continue;
-            Record r = new Record(i++, pair.getSecond().getOwnerID(), pair.getFirst().getPropertyID(), pair.getSecond().getPropertyID(), increases.getKey(), increases.getValue());
+            Record r = new Record(i++, pair, increases.getKey(), increases.getValue());
             s.add(r);
         }
         ObservableList<Record> items = FXCollections.observableArrayList(s);
