@@ -77,9 +77,6 @@ public class GraphStructure {
 
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t = 0;
-        int sizeToRemove = properties.size() - 10000;
-        // Remove from the beginning for simplicity
-        properties.subList(sizeToRemove, properties.size()).clear();
 
         for (Property property : properties) {
             g.addVertex(property);
