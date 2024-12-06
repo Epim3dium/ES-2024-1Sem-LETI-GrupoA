@@ -52,8 +52,8 @@ public class OwnerGraphStructure {
     private final Graph<Property, DefaultEdge> neigbour_map;
     private HashSet<Integer> owners;
 
-    private final double fitness_increase_coef = 1;
-    private final double fitness_difference_coef = 1;
+    private final double fitness_increase_coef = 10;
+    private final double fitness_difference_coef = 0.5;
 
     private static class IslandMember {
         boolean isMiddle = false;
@@ -165,7 +165,7 @@ public class OwnerGraphStructure {
         return g;
     }
 
-    static Pair<Double, Double> calcAvgAreaIncrease(OwnerGraphStructure ogs, PropertyPair exchange) {
+    public static Pair<Double, Double> calcAvgAreaIncrease(OwnerGraphStructure ogs, PropertyPair exchange) {
         Property first = exchange.first;
         Property second = exchange.second;
         IslandMember member_first = new IslandMember(ogs.islands.get(first));
@@ -199,14 +199,14 @@ public class OwnerGraphStructure {
         double second_island_increase = second_avg_aft - second_avg;
         return new Pair<>(first_island_icrease, second_island_increase);
     }
-    private static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
+    public static double exchangeFitness(OwnerGraphStructure ogs, PropertyPair exchange) {
         Pair<Double, Double> increase = calcAvgAreaIncrease(ogs, exchange);
         if(increase.getValue() < 0) { return 0;}
         if(increase.getKey() < 0) { return 0;}
         double difference =
-                Math.pow(exchange.first.getShapeArea() - exchange.second.getShapeArea(), 2.0)
+                Math.pow(exchange.first.getShapeArea() - exchange.second.getShapeArea(), 2)
                         * ogs.fitness_difference_coef;
-        double avgIncrease = (increase.getKey() + increase.getValue()) / 2.0 * ogs.fitness_increase_coef;
+        double avgIncrease = (increase.getKey() + increase.getValue()) * ogs.fitness_increase_coef;
         double increaseFairness = Math.abs(increase.getKey() - increase.getValue());
         return avgIncrease - increaseFairness - difference;
     }
@@ -216,7 +216,7 @@ public class OwnerGraphStructure {
         public int compare(PropertyPair o1, PropertyPair o2) {
             double fit1 = exchangeFitness(owner_graph_structure, o1);
             double fit2 = exchangeFitness(owner_graph_structure, o2);
-            return -Double.compare(fit1, fit2);
+            return Double.compare(fit1, fit2);
         }
         public PairComparator(OwnerGraphStructure ogs) {
             owner_graph_structure = ogs;
@@ -224,6 +224,7 @@ public class OwnerGraphStructure {
     }
     public void sortExchangesByFitness(List<PropertyPair> exchanges) {
         Collections.sort(exchanges, new PairComparator(this));
+        Collections.reverse(exchanges);
     }
     public List<PropertyPair> generateAllExchanges() {
         ArrayList<PropertyPair> result = new ArrayList<>();
