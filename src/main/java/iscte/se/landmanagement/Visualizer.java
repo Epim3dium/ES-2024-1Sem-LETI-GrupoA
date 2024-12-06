@@ -150,11 +150,10 @@ public class Visualizer extends JFrame {
                     int radius = clamp((int)(20 * scale), 4, 8);
                     g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
                 }
-                if(p.getClass() == Property.class && scale > 1.0 && !hideLabels) {
-                    Property prop = (Property) p;
-                    g.drawString("ID:" + prop.getPropertyID(), (int)pos.getX(), (int)pos.getY());
+                if( scale > 1.0 && !hideLabels) {
+                    g.drawString("ID:" + p.getPropertyID(), (int)pos.getX(), (int)pos.getY());
                     if(scale > 1.5) {
-                        g.drawString("Own:" + prop.getOwnerID(), (int)pos.getX(), (int)pos.getY() + g.getFontMetrics().getAscent());
+                        g.drawString("Own:" + p.getOwnerID(), (int)pos.getX(), (int)pos.getY() + g.getFontMetrics().getAscent());
 
                     }
                 }
