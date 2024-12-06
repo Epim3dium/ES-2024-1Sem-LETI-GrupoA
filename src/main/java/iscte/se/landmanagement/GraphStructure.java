@@ -150,10 +150,7 @@ public class GraphStructure {
                         Property p1 = properties.get(idxP);
                         Property p2 = properties.get(idxPP);
                         if (areAdjacentByDistance(p1, p2)) {
-                            if (t % 100 == 0) {
-                                System.out.println(t + " neighbours ");
 
-                            }
                             t++;
                             g.addEdge(p1, p2);
                             addNeighbours(p1, p2);

@@ -52,7 +52,7 @@ public class Visualizer extends JFrame {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 panel.scale += e.getWheelRotation() * 0.001; // Positive for down, negative for up
-                panel.scale = clamp(panel.scale, 0.0, 1.0);
+                panel.scale = clamp(panel.scale, 0.0, 3.0);
                 frame.repaint();
 
             }
@@ -70,12 +70,35 @@ public class Visualizer extends JFrame {
             }
         });
         frame.setContentPane(panel);
-
+        JButton button = new JButton("Show Outlines");
+        panel.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Action to be performed when the button is clicked
+                panel.drawOutlines = !panel.drawOutlines;
+                panel.revalidate();
+                panel.repaint();            }
+        });
+        button = new JButton("Hide Labels");
+        panel.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Action to be performed when the button is clicked
+                panel.hideLabels = !panel.hideLabels;
+                panel.revalidate();
+                panel.repaint();            }
+        });
+        panel.revalidate();
+        panel.repaint();
     }
+
     class DrawPane extends JPanel {
         Coordinates offset = new Coordinates(0, 0);
         double scale = 1.0 / 200.0;
-        private boolean drawOutlines = false;
+        public boolean drawOutlines = false;
+        public boolean hideLabels = false;
         private Coordinates min = new Coordinates(1e10, 1e10);
         private HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
         Coordinates avg(ArrayList<Coordinates> coords) {
@@ -109,6 +132,11 @@ public class Visualizer extends JFrame {
             g.setColor(Color.BLUE);
 
             for(Property p : graph.vertexSet()) {
+                Coordinates pos = transform(positions.get(p));
+                float padding = 10.f;
+                if(pos.getX() < -padding || pos.getY() < -padding || pos.getX() > this.getWidth() + padding || pos.getY() > this.getHeight() + padding) {
+                    continue;
+                }
                 if(drawOutlines) {
                     Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
                     for(Coordinates v : p.getCorners()) {
@@ -118,14 +146,21 @@ public class Visualizer extends JFrame {
                         prev = cur;
                     }
                 }else {
-                    int radius = clamp((int)(40 * scale), 4, 10);
-                    Coordinates pos = transform(positions.get(p));
+
+                    int radius = clamp((int)(20 * scale), 4, 8);
                     g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
+                }
+                if(p.getClass() == Property.class && scale > 1.0 && !hideLabels) {
+                    Property prop = (Property) p;
+                    g.drawString("ID:" + prop.getPropertyID(), (int)pos.getX(), (int)pos.getY());
+                    if(scale > 1.5) {
+                        g.drawString("Own:" + prop.getOwnerID(), (int)pos.getX(), (int)pos.getY() + g.getFontMetrics().getAscent());
+
+                    }
                 }
 
             }
             g.setColor(Color.RED);
-
             for(Property p : graph.vertexSet()) {
                 Coordinates pos = transform(positions.get(p));
                 for (DefaultEdge edge : graph.edgesOf(p)) {
