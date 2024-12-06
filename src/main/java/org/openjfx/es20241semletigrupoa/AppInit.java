@@ -381,7 +381,6 @@ public class AppInit {
 
         ArrayList<String> s=new ArrayList<>();
         List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
-        ownerGraphStructure.sortExchangesByFitness(exchanges);
         for (OwnerGraphStructure.PropertyPair pa:exchanges) {
             String ss;
             OwnerGraphStructure.PropertyPair pair = pa;

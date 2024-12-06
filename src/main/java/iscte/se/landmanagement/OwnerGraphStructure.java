@@ -211,7 +211,7 @@ public class OwnerGraphStructure {
         public int compare(PropertyPair o1, PropertyPair o2) {
             double fit1 = exchangeFitness(owner_graph_structure, o1);
             double fit2 = exchangeFitness(owner_graph_structure, o2);
-            return Double.compare(fit1, fit2);
+            return -Double.compare(fit1, fit2);
         }
         public PairComparator(OwnerGraphStructure ogs) {
             owner_graph_structure = ogs;
