@@ -6,9 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -19,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AppInit {
 
@@ -28,9 +29,15 @@ public class AppInit {
     private static final String DEFAULT_FILE_NAME = "Madeira-Moodle-1.1.csv";
 
 
+
     // FXML Elements
+    @FXML private ListView listView;
+    @FXML private TextField OwID;
+    @FXML private Button Ex;
+    @FXML private Button Sugg;
     @FXML private Button goBack5;
     @FXML private Button goBack3;
+    @FXML private Button goB3;
     @FXML private Button uploadButton;
     @FXML private Button nextButton;
     @FXML private Button calculateA1;
@@ -46,7 +53,7 @@ public class AppInit {
     @FXML private Button structure2Button;
     @FXML private Button AreasButton;
 
-    // Other Fields
+
 
     private FXMLLoader fxmlLoader;
     private Stage stage;
@@ -54,6 +61,7 @@ public class AppInit {
     private static PropFileReader propFileReader;
     private static GraphStructure graphStructure;
     private static CalcAreas calcAreas;
+    private static OwnerGraphStructure ownerGraphStructure;
     private final static Map<String, Map<String, List<String>>> locationData = new HashMap<>();
     private static Map<String,String> location = new HashMap<>();
     private final Map<String, String> selectedLocation = new HashMap<>();
@@ -124,6 +132,9 @@ public class AppInit {
             propFileReader.convertToPropertiy();
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             calcAreas = new CalcAreas(graphStructure.getG());
+            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
+            //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
+            ownerGraphStructure =new OwnerGraphStructure(graphStructure.getG());
             buildLocationData();
             navigateToScene("Stage3.fxml", "Stage 3"); // Navigate to the next stage after processing the file
         } catch (Exception e) {
@@ -149,7 +160,7 @@ public class AppInit {
     @FXML
     void getStructure1(MouseEvent event) {
         try {
-            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
+
             graphStructure.visualizeGraph(); // Assuming visualizeGraph() visualizes structure
         } catch (Exception e) {
             throw new RuntimeException("Error visualizing structure 1", e);
@@ -161,9 +172,14 @@ public class AppInit {
      */
     @FXML
     void getStructure2(MouseEvent event) {
-        // Structure 2 functionality (if any) should be added here
-        System.out.println("Structure 2 clicked");
+        try {
+
+           ownerGraphStructure.visualizeGraph();
+        } catch (Exception e) {
+            throw new RuntimeException("Error visualizing structure 1", e);
+        }
     }
+
 
     /**
      * Builds the hierarchical location data.
@@ -174,13 +190,13 @@ public class AppInit {
             String municipality = property.getMunicipality();
             String parish = property.getParish();
 
-            // Add island if not present
+
             locationData.putIfAbsent(island, new HashMap<>());
 
-            // Add municipality to the island if not present
+
             locationData.get(island).putIfAbsent(municipality, new ArrayList<>());
 
-            // Add parish to the municipality if not already in the list
+
             if (!locationData.get(island).get(municipality).contains(parish)) {
                 locationData.get(island).get(municipality).add(parish);
             }
@@ -273,8 +289,6 @@ public class AppInit {
 
         rootPane.getChildren().add(nextButton);
 
-//        graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
-//        calcAreas = new CalcAreas(graphStructure.getG());
     }
 
     /**
@@ -287,9 +301,6 @@ public class AppInit {
             String Ilha = location.get("Ilha");
             String Municipio = location.get("Municipio");
             String Freguesia = location.get("Freguesia");
-
-//            graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
-//            CalcAreas calcAreas = new CalcAreas(graphStructure.getG());
 
             if (Freguesia == null) {
                 areaResultLabel1.setText(String.valueOf(calcAreas.calcArea3(Municipio, "Municipio")));
@@ -357,6 +368,43 @@ public class AppInit {
         } catch (IOException e) {
             throw new RuntimeException("Error loading scene: " + fxmlFile, e);
         }
+    }
+
+
+    public void handleSugg(MouseEvent mouseEvent) {
+        navigateToScene("Stage7.fxml", "Stage 7");
+
+    }
+
+    public void listEx(MouseEvent mouseEvent) throws Exception {
+        int OwnerId = Integer.parseInt(OwID.getText());
+
+        ArrayList<String> s=new ArrayList<>();
+        List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
+        //filter
+        for(int i = 0; i < exchanges.size(); i++) {
+            OwnerGraphStructure.PropertyPair pair = exchanges.get(i);
+            if (pair.getFirst().getOwnerID() != OwnerId) {
+                pair.swap();
+            }
+            if (pair.getFirst().getOwnerID() != OwnerId) {
+                exchanges.remove(i);
+                i--;
+            }
+        }
+        exchanges = exchanges.subList(0, 7);
+
+        for (OwnerGraphStructure.PropertyPair pair:exchanges) {
+            String ss;
+            ss="Exchange between owners "+ pair.getFirst().getOwnerID()+" and "+ pair.getSecond().getOwnerID()+" ,lands " + pair.getFirst().getPropertyID()+" and "+ pair.getSecond().getPropertyID()+" respectively";
+            s.add(ss);
+
+        }
+        ObservableList<String> items = FXCollections.observableArrayList((s));
+        listView.setItems(items);
+
+
+        
     }
 }
 

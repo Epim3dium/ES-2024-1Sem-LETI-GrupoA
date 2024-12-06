@@ -11,9 +11,22 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class OwnerGraphStructure {
-    static class PropertyPair {
+    public static class PropertyPair {
+        public Property getSecond() {
+            return second;
+        }
+
+        public Property getFirst() {
+            return first;
+        }
+
         Property first;
         Property second;
+        public void swap() {
+            Property temp = first;
+            first = second;
+            second = temp;
+        }
         PropertyPair(Property first, Property second) {
             if(first.getOwnerID() > second.getOwnerID()) {
                 this.first = first;
@@ -203,16 +216,16 @@ public class OwnerGraphStructure {
         public int compare(PropertyPair o1, PropertyPair o2) {
             double fit1 = exchangeFitness(owner_graph_structure, o1);
             double fit2 = exchangeFitness(owner_graph_structure, o2);
-            return Double.compare(fit1, fit2);
+            return -Double.compare(fit1, fit2);
         }
         public PairComparator(OwnerGraphStructure ogs) {
             owner_graph_structure = ogs;
         }
     }
-    private void sortExchangesByFitness(List<PropertyPair> exchanges) {
+    public void sortExchangesByFitness(List<PropertyPair> exchanges) {
         Collections.sort(exchanges, new PairComparator(this));
     }
-    List<PropertyPair> generateAllExchanges() {
+    public List<PropertyPair> generateAllExchanges() {
         ArrayList<PropertyPair> result = new ArrayList<>();
         for(NeighbourEdge edge : graph.edgeSet()) {
             if(edge.incidents.size() <= 1) {

@@ -10,29 +10,30 @@ import java.util.*;
 
 public class CalcAreas {
 
-    public static void main(String[] args) throws Exception {
+//    public static void main(String[] args) throws Exception {
+//
+//        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
+//        if (url == null) {
+//            System.out.println("Arquivo CSV não encontrado!");
+//            return;
+//        }
+//
+//        Path path = Paths.get(url.toURI());
+//        PropFileReader propFileReader = new PropFileReader(path);
+//
+//        propFileReader.readFile();
+//        propFileReader.convertToPropertiy();
+//
+//        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
+//
+//        CalcAreas c = new CalcAreas(g.getG());
+//        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
+//        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
+//
+//    }
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
-        if (url == null) {
-            System.out.println("Arquivo CSV não encontrado!");
-            return;
-        }
 
-        Path path = Paths.get(url.toURI());
-        PropFileReader propFileReader = new PropFileReader(path);
-
-        propFileReader.readFile();
-        propFileReader.convertToPropertiy();
-
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
-
-        CalcAreas c = new CalcAreas(g.getG());
-        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
-        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
-
-    }
-
-
+    private GraphStructure g;
     private Graph<Property, DefaultEdge> graph;
 
 
@@ -40,6 +41,16 @@ public class CalcAreas {
         this.graph = graph;
 
     }
+
+    public CalcAreas(GraphStructure g) {
+        this.g = g;
+        this.graph=g.getG();
+    }
+
+   public ArrayList<Property> toList(Graph<Property, DefaultEdge> graph) {
+        ArrayList<Property> result = new ArrayList<>(graph.vertexSet());
+       return result;
+   }
 
     /**
      * Calculates the Average Area of {@link Property} of a geographic area indicated by the user
@@ -52,13 +63,21 @@ public class CalcAreas {
 
         List<Property> filteredProperties = graph.vertexSet().stream().filter(property -> matchesLocal(property, areaT, areaType)).toList();
 
+
+        if(filteredProperties.isEmpty()) {
+            return 0;
+        }
         double sum = 0;
+
+
 
         for (Property p : filteredProperties) {
             System.out.println(p.getShapeArea());
             sum += p.getShapeArea();
 
         }
+
+
         return sum / filteredProperties.size();
     }
 
@@ -124,5 +143,18 @@ public class CalcAreas {
         return totalArea;
     }
 
+    public GraphStructure changeProperty(Property t,Property s, int ns, int mt) {
+        ArrayList<Property> n=toList(graph);
+        for(Property i:n){
+            if(i.equals(t)){
+                i.setOwnerID(ns);
+            } else if (i.equals(s)) {
+                i.setOwnerID(mt);
+            }
+
+        }
+        return new GraphStructure(n,4);
+
+    }
 
 }

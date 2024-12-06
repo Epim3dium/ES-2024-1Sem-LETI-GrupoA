@@ -31,7 +31,7 @@ private PropFileReader propFileReader;
 
     assertNotNull(fileLines);
     assertFalse(fileLines.isEmpty());
-    assertEquals(2,fileLines.size());
+    assertEquals(10,fileLines.size());
 
     }
 
@@ -56,9 +56,10 @@ private PropFileReader propFileReader;
         ArrayList<Property>props = propFileReader.getProperties();
 
         assertNotNull(props);
-        assertEquals(2,props.size());
+        assertEquals(10,props.size());
         Property prop = props.get(0);
         assertEquals(1,prop.getPropertyID());
         assertEquals(93,prop.getOwnerID());
     }
+
 }

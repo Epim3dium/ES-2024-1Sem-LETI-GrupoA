@@ -28,6 +28,9 @@ import static java.lang.System.exit;
 public class GraphStructure {
 
     private Graph<Property, DefaultEdge> graph;
+
+
+
     private ArrayList<Property> properties;
     private int threshold;
 
@@ -53,9 +56,7 @@ public class GraphStructure {
 
     }
     public void visualizeGraph() {
-        Visualizer.PositionCaller<Property> posCaller = (p) -> { return Coordinates.avg(p.getCorners()); };
-        Visualizer.OutlineCaller<Property> outlineCaller = Property::getCorners;
-        Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
+        Visualizer vis = new Visualizer(graph);
     }
 
 
@@ -66,6 +67,8 @@ public class GraphStructure {
         this.graph = formGraph();
 
     }
+
+
 
 
     /**
@@ -148,10 +151,7 @@ public class GraphStructure {
                         Property p1 = properties.get(idxP);
                         Property p2 = properties.get(idxPP);
                         if (areAdjacentByDistance(p1, p2)) {
-                            if (t % 100 == 0) {
-                                System.out.println(t + " neighbours ");
 
-                            }
                             t++;
                             g.addEdge(p1, p2);
                             addNeighbours(p1, p2);
@@ -217,6 +217,12 @@ public class GraphStructure {
 
     public Graph<Property, DefaultEdge> getG() {
         return this.graph;
+    }
+
+
+
+    public ArrayList<Property> getProperties() {
+        return properties;
     }
 
 }
