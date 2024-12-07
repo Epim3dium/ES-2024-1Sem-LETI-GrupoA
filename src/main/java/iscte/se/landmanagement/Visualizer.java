@@ -37,7 +37,7 @@ public class Visualizer extends JFrame {
      */
     public void setHighlightedExchange(OwnerGraphStructure.PropertyPair highlightedExchange) {
         this.highlightedExchange = highlightedExchange;
-        //this.showOnlyHighlighted = true;
+
     }
 
     /**
@@ -166,8 +166,8 @@ public class Visualizer extends JFrame {
          */
         public Coordinates transform(Coordinates pos) {
             return new
-                    Coordinates(((pos.getX() - min.getX()) * scale) + offset.getX() * scale + this.getWidth() / 2,
-                    ((pos.getY() - min.getY()) * scale) + offset.getY() * scale + this.getHeight() / 2);
+                    Coordinates(((pos.getX() - min.getX()) * scale) + offset.getX() * scale + (double) this.getWidth() / 2,
+                    ((pos.getY() - min.getY()) * scale) + offset.getY() * scale + (double) this.getHeight() / 2);
         }
 
         /**
@@ -250,7 +250,7 @@ public class Visualizer extends JFrame {
                     continue;
                 }
 
-                if (showOnlyHighlighted && !isHighlighted) {
+                if (showOnlyHighlighted) {
                     continue;
                 }
                 if (drawOutlines) {

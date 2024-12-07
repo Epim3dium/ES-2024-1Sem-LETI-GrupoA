@@ -60,7 +60,6 @@ public class Property {
         this.parish = "";
         this.municipality = "";
         this.island = "";
-        this.parcelNum = 0;
         this.parcelID = 0;
         this.parcelNum = areaSum;
         this.shapeLength = 0;

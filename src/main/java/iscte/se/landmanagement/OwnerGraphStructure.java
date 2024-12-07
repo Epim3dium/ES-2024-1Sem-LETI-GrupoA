@@ -84,7 +84,6 @@ public class OwnerGraphStructure {
 
     private final Graph<Integer, NeighbourEdge> graph;
     private final Graph<Property, DefaultEdge> neigbour_map;
-    private HashSet<Integer> owners;
 
     private final double fitness_increase_coef = 5;
     private final double fitness_difference_coef = 1;
@@ -136,15 +135,6 @@ public class OwnerGraphStructure {
     private Map<Integer, IslandInfo> owner_islands = new HashMap<>();
     private Integer next_island = 0;
 
-    /**
-     * Visualizes the graph of owners and their properties.
-     */
-    public void visualizeGraph() {
-
-        //Visualizer.PositionCaller<Integer> posCaller = (p) -> { return Coordinates.avg(owners_positions.get(p)); };
-        //Visualizer.OutlineCaller<Integer> outlineCaller = null;
-        //Visualizer vis = new Visualizer(graph, posCaller, outlineCaller);
-    }
 
     /**
      * Constructs an OwnerGraphStructure from a graph of properties and their neighbors.
@@ -177,11 +167,9 @@ public class OwnerGraphStructure {
      */
     private Graph<Integer, NeighbourEdge> formGraph(Graph<Property, DefaultEdge> property_neighbours) {
         SimpleGraph<Integer, NeighbourEdge> g = new SimpleGraph<>(NeighbourEdge.class);
-        owners = new HashSet<>();
+
 
         for (Property p : property_neighbours.vertexSet()) {
-            owners.add(p.getOwnerID());
-
             Integer owner = p.getOwnerID();
             insertNew(owner, g);
 
@@ -220,11 +208,6 @@ public class OwnerGraphStructure {
 
         IslandInfo island_first = new IslandInfo(ogs.owner_islands.get(first.getOwnerID()));
         IslandInfo island_second = new IslandInfo(ogs.owner_islands.get(second.getOwnerID()));
-
-        assert (island_first != null);
-        assert (island_second != null);
-        assert (member_first != null);
-        assert (member_second != null);
 
         double first_avg = island_first.getAverage();
         double second_avg = island_second.getAverage();
