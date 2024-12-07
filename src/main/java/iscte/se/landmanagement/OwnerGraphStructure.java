@@ -52,8 +52,8 @@ public class OwnerGraphStructure {
     private final Graph<Property, DefaultEdge> neigbour_map;
     private HashSet<Integer> owners;
 
-    private final double fitness_increase_coef = 10;
-    private final double fitness_difference_coef = 0.5;
+    private final double fitness_increase_coef = 5;
+    private final double fitness_difference_coef = 1;
 
     private static class IslandMember {
         boolean isMiddle = false;
