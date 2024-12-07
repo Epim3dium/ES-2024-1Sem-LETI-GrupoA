@@ -16,6 +16,7 @@ class CoordinatesTest {
         assertEquals(1, coords.getX());
         assertEquals(2, coords.getY());
     }
+
     @Test
     void settingAndGetting() {
         Coordinates coords = new Coordinates(0, 0);
@@ -48,6 +49,7 @@ class CoordinatesTest {
         List<Coordinates> coordsList = new ArrayList<>();
         assertThrows(IllegalArgumentException.class, () -> Coordinates.avg(coordsList));
     }
+
     @Test
     void testAvgNullList() {
         List<Coordinates> coordsList = null;

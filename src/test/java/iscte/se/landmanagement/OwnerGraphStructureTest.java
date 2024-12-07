@@ -13,6 +13,7 @@ class OwnerGraphStructureTest {
     private ArrayList<Property> properties;
     private GraphStructure graphExample;
     private OwnerGraphStructure ownerGraphExample;
+
     @BeforeEach
     void set() {
 
@@ -61,13 +62,14 @@ class OwnerGraphStructureTest {
         graphExample = new GraphStructure(properties, 1);
         ownerGraphExample = new OwnerGraphStructure(graphExample.getG());
     }
+
     @Test
     void utils() {
         List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphExample.generateAllExchanges();
         //1-> 4    3 -> 5
         assertEquals(2, exchanges.size());
         List<Double> diffs = new ArrayList<>();
-        for(OwnerGraphStructure.PropertyPair exchange : exchanges) {
+        for (OwnerGraphStructure.PropertyPair exchange : exchanges) {
 
             Pair<Double, Double> increases = OwnerGraphStructure.calcAvgAreaIncrease(ownerGraphExample, exchange);
             assertTrue(increases.getKey() > 0);

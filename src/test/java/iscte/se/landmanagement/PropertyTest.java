@@ -14,13 +14,14 @@ class PropertyTest {
     void initialization() {
         Coordinates c = new Coordinates(0, 0);
         Property prop = new Property(1, 2, 3, 4,
-                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
+                5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
         assertEquals(1, prop.getPropertyID());
         assertEquals(2, prop.getParcelID());
         assertEquals(3, prop.getParcelNum());
         assertEquals(5, prop.getShapeArea());
         assertEquals(6, prop.getOwnerID());
     }
+
     @Test
     void notFullInitialization() {
         Property prop = new Property(1, 200.0);
@@ -29,17 +30,19 @@ class PropertyTest {
         assertEquals("", prop.getMunicipality());
         assertEquals("", prop.getParish());
     }
+
     @Test
     void stringification() {
         Property prop = new Property(1, 2, 3, 4,
-                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
+                5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
         assertEquals("1, Arco da Calheta, Calheta, Madeira", prop.toString());
     }
+
     @Test
     void settingAndGetting() {
         Coordinates c = new Coordinates(0, 0);
         Property prop = new Property(1, 2, 3, 4,
-                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
+                5, new ArrayList<>(), 6, "Arco da Calheta", "Calheta", "Madeira");
         prop.setPropertyID(2);
         prop.setParcelID(2);
         prop.setOwnerID(2);
