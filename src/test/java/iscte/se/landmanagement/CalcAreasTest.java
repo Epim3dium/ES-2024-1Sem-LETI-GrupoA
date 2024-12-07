@@ -13,6 +13,7 @@ import java.util.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class CalcAreasTest {
     private Graph<Property, DefaultEdge> graph;
 
@@ -39,7 +40,7 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea3(AreaN, AreaT);
-        assertEquals(914.5761711609113,d,0.001);
+        assertEquals(914.5761711609113, d, 0.001);
 
     }
 
@@ -49,7 +50,7 @@ class CalcAreasTest {
         String AreaT = "Municipio";
         CalcAreas c = new CalcAreas(graph);
         double d = c.calcArea4(AreaN, AreaT);
-        assertEquals(917.6018973557536,d,0.001);
+        assertEquals(917.6018973557536, d, 0.001);
     }
 
     @Test

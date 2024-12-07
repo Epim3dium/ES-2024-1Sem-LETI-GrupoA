@@ -17,7 +17,7 @@ public class GraphExampleTest {
 
 
     @BeforeEach
-    void set(){
+    void set() {
 
         ArrayList<Coordinates> coordinatesList1 = new ArrayList<>();
         coordinatesList1.add(new Coordinates(10.0, 20.0));
@@ -36,16 +36,16 @@ public class GraphExampleTest {
         coordinatesList3.add(new Coordinates(14.0, 20.0));
         properties = new ArrayList<>();
 
-        Property p1 = new Property(1, 2, 3, 4, 5, coordinatesList1, 6," ", " "," ");
-        Property p2 = new Property(3, 4, 5, 6, 7, coordinatesList2, 8," ", " "," ");
-        Property p3 = new Property(4, 5, 6, 7, 8, coordinatesList3, 9," ", " "," ");
+        Property p1 = new Property(1, 2, 3, 4, 5, coordinatesList1, 6, " ", " ", " ");
+        Property p2 = new Property(3, 4, 5, 6, 7, coordinatesList2, 8, " ", " ", " ");
+        Property p3 = new Property(4, 5, 6, 7, 8, coordinatesList3, 9, " ", " ", " ");
 
 
         this.properties.add(p1);
         this.properties.add(p2);
         this.properties.add(p3);
 
-        graphExample = new GraphStructure(properties,1);
+        graphExample = new GraphStructure(properties, 1);
     }
 
     @Test
@@ -56,20 +56,17 @@ public class GraphExampleTest {
         assertEquals(new ArrayList<>(this.properties), new ArrayList<>(g.getG().vertexSet()));
 
 
-
         ArrayList<Property> emptyProperties = new ArrayList<>();
         g = new GraphStructure(emptyProperties, 1);
         assertEquals(0, g.getG().vertexSet().size());
 
-
-        //assertThrows(NullPointerException.class, () -> new GraphStructure(null, 1));
     }
 
 
     @Test
     void GraphFormTest() {
         Graph<Property, DefaultEdge> graph = graphExample.getG();
-        assertEquals(3,graph.vertexSet().size());
+        assertEquals(3, graph.vertexSet().size());
         assertTrue(graph.vertexSet().containsAll(this.properties));
 
         assertFalse(graph.edgeSet().isEmpty());
@@ -77,14 +74,13 @@ public class GraphExampleTest {
     }
 
     @Test
-
     void AdjencyByDistanceTest() {
         Property p1 = this.properties.get(0);
         Property p2 = this.properties.get(1);
         Property p3 = this.properties.get(2);
 
-        assertTrue(graphExample.areAdjacentByDistance(p1,p3));
-        assertFalse(graphExample.areAdjacentByDistance(p1,p2));
+        assertTrue(graphExample.areAdjacentByDistance(p1, p3));
+        assertFalse(graphExample.areAdjacentByDistance(p1, p2));
     }
 
     @Test
@@ -109,10 +105,6 @@ public class GraphExampleTest {
         Coordinates c3 = new Coordinates(-3, -4);
         assertEquals(10.0, GraphStructure.calculateDistance(c1, c3), 0.01);
     }
-
-
-
-
 
 
 }

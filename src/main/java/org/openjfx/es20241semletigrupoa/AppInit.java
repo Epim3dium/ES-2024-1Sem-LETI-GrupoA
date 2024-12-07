@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -35,54 +34,100 @@ public class AppInit {
     private static final String DEFAULT_FILE_NAME = "Madeira-Moodle-1.1.csv";
 
     private static class Record {
-        private int ranking = 0;
+        private int ranking;
         private OwnerGraphStructure.PropertyPair exchange;
-        private double myAreaInc = 0;
-        private double otherAreaInc = 0;
+        private double myAreaInc;
+        private double otherAreaInc;
 
-        final public double getMyAreaInc() {return myAreaInc;}
-        final public double getOtherAreaInc() {return otherAreaInc;}
-        final public int getRanking() {return ranking;}
-        final public int getOtherOwner() { return exchange.getSecond().getOwnerID();}
-        final public int getMyProperty() { return exchange.getFirst().getPropertyID();}
-        final public int getOtherProperty() { return exchange.getSecond().getPropertyID();}
+        final public double getMyAreaInc() {
+            return myAreaInc;
+        }
+
+        final public double getOtherAreaInc() {
+            return otherAreaInc;
+        }
+
+        final public int getRanking() {
+            return ranking;
+        }
+
+        final public int getOtherOwner() {
+            return exchange.getSecond().getOwnerID();
+        }
+
+        final public int getMyProperty() {
+            return exchange.getFirst().getPropertyID();
+        }
+
+        final public int getOtherProperty() {
+            return exchange.getSecond().getPropertyID();
+        }
+
         Record(int ranking, OwnerGraphStructure.PropertyPair exchange, double myAreaInc, double otherAreaInc) {
             this.ranking = ranking;
             this.exchange = exchange;
             this.myAreaInc = myAreaInc;
             this.otherAreaInc = otherAreaInc;
         }
-    };
+    }
+
+    ;
 
     // FXML Elements
-    @FXML private TableView<Record> tableView;
-    @FXML private TableColumn<Record, Integer> otherOwnerColumn;
-    @FXML private TableColumn<Record, Integer> myPropertyColumn;
-    @FXML private TableColumn<Record, Integer> otherPropertyColumn;
-    @FXML private TableColumn<Record, Integer> rankColumn;
-    @FXML private TableColumn<Record, Double> areaIncColumn;
-    @FXML private TableColumn<Record, Double> otherIncColumn;
-    @FXML private TextField OwID;
-    @FXML private Button Ex;
-    @FXML private Button Sugg;
-    @FXML private Button goBack5;
-    @FXML private Button goBack3;
-    @FXML private Button goB3;
-    @FXML private Button uploadButton;
-    @FXML private Button nextButton;
-    @FXML private Button calculateA1;
-    @FXML private Button calculateA2;
-    @FXML private ComboBox<String> islandComboBox;
-    @FXML private ComboBox<String> municipalityComboBox;
-    @FXML private ComboBox<String> parishComboBox;
-    @FXML private Label fileNameLabel;
-    @FXML private Label areaResultLabel1;
-    @FXML private Label areaResultLabel2;
-    @FXML private AnchorPane rootPane;
-    @FXML private Button structure1Button;
-    @FXML private Button structure2Button;
-    @FXML private Button AreasButton;
-
+    @FXML
+    private TableView<Record> tableView;
+    @FXML
+    private TableColumn<Record, Integer> otherOwnerColumn;
+    @FXML
+    private TableColumn<Record, Integer> myPropertyColumn;
+    @FXML
+    private TableColumn<Record, Integer> otherPropertyColumn;
+    @FXML
+    private TableColumn<Record, Integer> rankColumn;
+    @FXML
+    private TableColumn<Record, Double> areaIncColumn;
+    @FXML
+    private TableColumn<Record, Double> otherIncColumn;
+    @FXML
+    private TextField OwID;
+    @FXML
+    private Button Ex;
+    @FXML
+    private Button Sugg;
+    @FXML
+    private Button goBack5;
+    @FXML
+    private Button goBack3;
+    @FXML
+    private Button goB3;
+    @FXML
+    private Button uploadButton;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private Button calculateA1;
+    @FXML
+    private Button calculateA2;
+    @FXML
+    private ComboBox<String> islandComboBox;
+    @FXML
+    private ComboBox<String> municipalityComboBox;
+    @FXML
+    private ComboBox<String> parishComboBox;
+    @FXML
+    private Label fileNameLabel;
+    @FXML
+    private Label areaResultLabel1;
+    @FXML
+    private Label areaResultLabel2;
+    @FXML
+    private AnchorPane rootPane;
+    @FXML
+    private Button structure1Button;
+    @FXML
+    private Button structure2Button;
+    @FXML
+    private Button AreasButton;
 
 
     private FXMLLoader fxmlLoader;
@@ -93,7 +138,7 @@ public class AppInit {
     private static CalcAreas calcAreas;
     private static OwnerGraphStructure ownerGraphStructure;
     private final static Map<String, Map<String, List<String>>> locationData = new HashMap<>();
-    private static Map<String,String> location = new HashMap<>();
+    private static Map<String, String> location = new HashMap<>();
     private final Map<String, String> selectedLocation = new HashMap<>();
 
     public void setStage(Stage stage) {
@@ -132,7 +177,7 @@ public class AppInit {
     private void moveFileToResources(File file) {
         try {
             Path destination = Paths.get(RESOURCES_PATH, file.getName());
-            if(!destination.toFile().exists()) {
+            if (!destination.toFile().exists()) {
                 Files.copy(file.toPath(), destination);
             }
         } catch (IOException e) {
@@ -163,7 +208,7 @@ public class AppInit {
             graphStructure = new GraphStructure(propFileReader.getProperties(), 4);
             calcAreas = new CalcAreas(graphStructure.getG());
             //OwgraphStructure = new OwnerGraphStructure(graphStructure.getG());
-            ownerGraphStructure =new OwnerGraphStructure(graphStructure.getG());
+            ownerGraphStructure = new OwnerGraphStructure(graphStructure.getG());
             buildLocationData();
             navigateToScene("Stage3.fxml", "Stage 3"); // Navigate to the next stage after processing the file
         } catch (Exception e) {
@@ -178,7 +223,7 @@ public class AppInit {
     @FXML
     void goToAreas(MouseEvent event) {
         navigateToScene("Stage5.fxml", "Stage 5");
-        rootPane=fxmlLoader.getRoot();
+        rootPane = fxmlLoader.getRoot();
         initializeComboBoxes();
 
     }
@@ -196,18 +241,6 @@ public class AppInit {
         }
     }
 
-    /**
-     * Handles structure2 button action (currently empty, add functionality if needed).
-     */
-    @FXML
-    void getStructure2(MouseEvent event) {
-        try {
-
-           ownerGraphStructure.visualizeGraph();
-        } catch (Exception e) {
-            throw new RuntimeException("Error visualizing structure 1", e);
-        }
-    }
 
 
     /**
@@ -237,9 +270,9 @@ public class AppInit {
      */
     private void initializeComboBoxes() {
 
-        islandComboBox= new ComboBox<>();
-        municipalityComboBox= new ComboBox<>();
-        parishComboBox= new ComboBox<>();
+        islandComboBox = new ComboBox<>();
+        municipalityComboBox = new ComboBox<>();
+        parishComboBox = new ComboBox<>();
 
         islandComboBox.setPrefWidth(200);
         islandComboBox.setPrefHeight(30);
@@ -305,11 +338,11 @@ public class AppInit {
 
     private void enableCalculateAreasButton() {
         nextButton = new Button("Next");
-        location=new HashMap<>();
+        location = new HashMap<>();
         nextButton.setOnMouseClicked(event -> {
-            location.putIfAbsent("Ilha",islandComboBox.getValue());
-            location.putIfAbsent("Municipio",municipalityComboBox.getValue());
-            location.putIfAbsent("Freguesia",parishComboBox.getValue());
+            location.putIfAbsent("Ilha", islandComboBox.getValue());
+            location.putIfAbsent("Municipio", municipalityComboBox.getValue());
+            location.putIfAbsent("Freguesia", parishComboBox.getValue());
             navigateToScene("Stage6.fxml", "Stage 6");
         });
 
@@ -371,7 +404,7 @@ public class AppInit {
     @FXML
     void goBack5(MouseEvent event) {
         navigateToScene("Stage5.fxml", "Stage 5");
-        rootPane=fxmlLoader.getRoot();
+        rootPane = fxmlLoader.getRoot();
         initializeComboBoxes();
     }
 
@@ -431,6 +464,7 @@ public class AppInit {
             System.out.println(e.getMessage());
         }
     }
+
     /**
      * Generic method to handle scene navigation.
      */
@@ -457,11 +491,10 @@ public class AppInit {
         int OwnerId = Integer.parseInt(OwID.getText());
 
 
-
-        ArrayList<Record> s=new ArrayList<>();
+        ArrayList<Record> s = new ArrayList<>();
         List<OwnerGraphStructure.PropertyPair> exchanges = ownerGraphStructure.generateAllExchanges();
         //filter
-        for(int i = 0; i < exchanges.size(); i++) {
+        for (int i = 0; i < exchanges.size(); i++) {
             OwnerGraphStructure.PropertyPair pair = exchanges.get(i);
             if (pair.getFirst().getOwnerID() != OwnerId) {
                 pair.swap();
@@ -472,9 +505,9 @@ public class AppInit {
             }
         }
         int i = 1;
-        for (OwnerGraphStructure.PropertyPair pair:exchanges) {
-            Pair<Double, Double> increases= OwnerGraphStructure.calcAvgAreaIncrease(ownerGraphStructure, pair);
-            if(increases.getValue() < 0 || increases.getKey() < 0)
+        for (OwnerGraphStructure.PropertyPair pair : exchanges) {
+            Pair<Double, Double> increases = OwnerGraphStructure.calcAvgAreaIncrease(ownerGraphStructure, pair);
+            if (increases.getValue() < 0 || increases.getKey() < 0)
                 continue;
             Record r = new Record(i++, pair, increases.getKey(), increases.getValue());
             s.add(r);

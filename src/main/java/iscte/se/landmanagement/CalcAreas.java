@@ -3,54 +3,46 @@ package iscte.se.landmanagement;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * This class provides methods to calculate property areas and manage changes in a graph structure of properties.
+ */
 public class CalcAreas {
-
-//    public static void main(String[] args) throws Exception {
-//
-//        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
-//        if (url == null) {
-//            System.out.println("Arquivo CSV não encontrado!");
-//            return;
-//        }
-//
-//        Path path = Paths.get(url.toURI());
-//        PropFileReader propFileReader = new PropFileReader(path);
-//
-//        propFileReader.readFile();
-//        propFileReader.convertToPropertiy();
-//
-//        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 4);
-//
-//        CalcAreas c = new CalcAreas(g.getG());
-//        System.out.println(c.calcArea3("Jardim do Mar", "Freguesia"));
-//        System.out.println(c.calcArea4("Jardim do Mar", "Freguesia"));
-//
-//    }
-
 
     private GraphStructure g;
     private Graph<Property, DefaultEdge> graph;
 
-
+    /**
+     * Constructs a CalcAreas instance with the specified graph.
+     *
+     * @param graph the graph containing the properties
+     */
     public CalcAreas(Graph<Property, DefaultEdge> graph) {
         this.graph = graph;
 
     }
 
+    /**
+     * Constructs a CalcAreas instance with the specified graph structure.
+     *
+     * @param g the graph structure containing the properties
+     */
     public CalcAreas(GraphStructure g) {
         this.g = g;
-        this.graph=g.getG();
+        this.graph = g.getG();
     }
 
-   public ArrayList<Property> toList(Graph<Property, DefaultEdge> graph) {
+    /**
+     * Converts the vertex set of a graph into a list of properties.
+     *
+     * @param graph the graph whose vertex set is to be converted
+     * @return a list of properties in the graph
+     */
+    public ArrayList<Property> toList(Graph<Property, DefaultEdge> graph) {
         ArrayList<Property> result = new ArrayList<>(graph.vertexSet());
-       return result;
-   }
+        return result;
+    }
 
     /**
      * Calculates the Average Area of {@link Property} of a geographic area indicated by the user
@@ -64,15 +56,13 @@ public class CalcAreas {
         List<Property> filteredProperties = graph.vertexSet().stream().filter(property -> matchesLocal(property, areaT, areaType)).toList();
 
 
-        if(filteredProperties.isEmpty()) {
+        if (filteredProperties.isEmpty()) {
             return 0;
         }
         double sum = 0;
 
 
-
         for (Property p : filteredProperties) {
-            System.out.println(p.getShapeArea());
             sum += p.getShapeArea();
 
         }
@@ -107,6 +97,14 @@ public class CalcAreas {
         return avg;
     }
 
+    /**
+     * Checks whether a property matches a specific geographic area based on its type.
+     *
+     * @param property the property to check
+     * @param areaT    the name of the geographic area
+     * @param type     the type of the area (Parish/Municipality/Island)
+     * @return true if the property matches the area, false otherwise
+     */
     private boolean matchesLocal(Property property, String areaT, String type) {
         return switch (type) {
             case "Freguesia" -> property.getParish().equals(areaT);
@@ -117,6 +115,15 @@ public class CalcAreas {
 
     }
 
+    /**
+     * Explores a connected component of properties in the graph that are owned by the same owner,
+     * starting from a given property.
+     *
+     * @param graph    the graph of properties
+     * @param property the starting property
+     * @param visited  a set of already visited properties
+     * @return the total area of the connected component
+     */
     private double exploreConnectedComp(Graph<Property, DefaultEdge> graph, Property property, Set<Property> visited) {
         double totalArea = 0;
         Queue<Property> queue = new LinkedList<>();
@@ -129,9 +136,6 @@ public class CalcAreas {
 
             for (DefaultEdge edge : graph.edgesOf(p)) {
                 Property neighbor = graph.getEdgeTarget(edge);
-//                if(neighbor.equals(p)){
-//                    neighbor=graph.getEdgeSource(edge);
-//                }
                 if (!visited.contains(neighbor) && neighbor.getOwnerID() == p.getOwnerID()) {
                     visited.add(neighbor);
                     queue.add(neighbor);
@@ -143,17 +147,26 @@ public class CalcAreas {
         return totalArea;
     }
 
-    public GraphStructure changeProperty(Property t,Property s, int ns, int mt) {
-        ArrayList<Property> n=toList(graph);
-        for(Property i:n){
-            if(i.equals(t)){
+    /**
+     * Changes the ownership of two properties in the graph and returns the updated graph structure.
+     *
+     * @param t  the first property to update
+     * @param s  the second property to update
+     * @param ns the new owner ID for the first property
+     * @param mt the new owner ID for the second property
+     * @return the updated graph structure
+     */
+    public GraphStructure changeProperty(Property t, Property s, int ns, int mt) {
+        ArrayList<Property> n = toList(graph);
+        for (Property i : n) {
+            if (i.equals(t)) {
                 i.setOwnerID(ns);
             } else if (i.equals(s)) {
                 i.setOwnerID(mt);
             }
 
         }
-        return new GraphStructure(n,4);
+        return new GraphStructure(n, 4);
 
     }
 

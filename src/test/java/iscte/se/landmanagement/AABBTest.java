@@ -16,6 +16,7 @@ class AABBTest {
         assertEquals(50, position.getX());
         assertEquals(0, position.getY());
     }
+
     @Test
     void expanding() {
         AABB aabb = new AABB();
@@ -30,6 +31,7 @@ class AABBTest {
         assertEquals(new Coordinates(200, 300), aabb.area());
 
     }
+
     @Test
     void overlapping() {
         AABB aabb1 = new AABB(100, -100, -100, 100);
