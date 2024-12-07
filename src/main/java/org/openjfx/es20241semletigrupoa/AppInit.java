@@ -426,6 +426,7 @@ public class AppInit {
                 });
                 return row;
             });
+            rankColumn.setPrefWidth(40);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
