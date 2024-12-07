@@ -67,7 +67,7 @@ public class Coordinates {
      */
     @Override
     public String toString() {
-        return "Coordinates:" + "x-> " + x + ", y-> " + y + " " ;
+        return "Coordinates:" + "x-> " + x + ", y-> " + y + " ";
     }
 
     /**
@@ -87,7 +87,7 @@ public class Coordinates {
         if (getClass() != obj.getClass())
             return false;
         Coordinates coords = (Coordinates) obj;
-        if(coords.x != this.x) {
+        if (coords.x != this.x) {
             return false;
         }
         return coords.y == this.y;
@@ -101,11 +101,11 @@ public class Coordinates {
      * @param coords the list of {@link Coordinates} to average.
      *               Must not be null or empty.
      * @return a {@link Coordinates} object representing the average X and Y values
-     *         of the input coordinates.
+     * of the input coordinates.
      * @throws IllegalArgumentException if the list is null or empty.
      */
     static Coordinates avg(List<Coordinates> coords) {
-        if(coords.size() == 0) throw new IllegalArgumentException();
+        if (coords.size() == 0) throw new IllegalArgumentException();
         Coordinates result = new Coordinates(0, 0);
         for (Coordinates coord : coords) {
             result.setX(result.getX() + coord.getX());
