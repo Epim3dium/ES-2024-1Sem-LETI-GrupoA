@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="rootPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.AppInit">
+   <children>
+      <Text layoutX="182.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Data File" textAlignment="CENTER" wrappingWidth="235.13671875">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Text>
+      <Button fx:id="uploadButton" layoutX="262.0" layoutY="157.0" mnemonicParsing="false" onMouseClicked="#handleFileUpload" text="Upload File" />
+      <Label fx:id="fileNameLabel" layoutX="257.0" layoutY="210.0" text="No File Selected" />
+   </children>
+</AnchorPane>

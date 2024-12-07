@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.es20241semletigrupoa.AppInit">
+   <children>
+      <Label fx:id="descLabel" layoutX="225.0" layoutY="5.0" prefHeight="20.0" prefWidth="432.0"
+             text="Showing suggestions for Owner:">
+      </Label>
+      <TextField fx:id="OwID" layoutX="225.0" layoutY="33.0" promptText="Insert Owner ID" />
+      <Button fx:id="Ex" layoutX="249.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#listEx" text="Get suggestions" />
+      <TableView fx:id="tableView" layoutX="84.0" layoutY="115.0" prefHeight="198.0" prefWidth="470.0">
+         <columns>
+            <TableColumn text="Rank" fx:id="rankColumn" />
+            <TableColumn text="Other Owner" fx:id="otherOwnerColumn" />
+            <TableColumn text="My Property" fx:id="myPropertyColumn" />
+            <TableColumn text="Other Property" fx:id="otherPropertyColumn" />
+            <TableColumn text="Avg Area Increase" fx:id="areaIncColumn" />
+            <TableColumn text="Others Avg Area Increase" fx:id="otherIncColumn" />
+         </columns>
+      </TableView>
+      <Button fx:id="goB3" layoutX="270.0" layoutY="329.0" mnemonicParsing="false" onMouseClicked="#goBack3" text="Go Back" />
+   </children>
+</AnchorPane>
