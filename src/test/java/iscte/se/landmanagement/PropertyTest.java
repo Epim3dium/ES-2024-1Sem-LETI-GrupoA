@@ -22,6 +22,20 @@ class PropertyTest {
         assertEquals(6, prop.getOwnerID());
     }
     @Test
+    void notFullInitialization() {
+        Property prop = new Property(1, 200.0);
+        assertEquals(1, prop.getOwnerID());
+        assertEquals(200.0, prop.getShapeArea());
+        assertEquals("", prop.getMunicipality());
+        assertEquals("", prop.getParish());
+    }
+    @Test
+    void stringification() {
+        Property prop = new Property(1, 2, 3, 4,
+                5, new ArrayList<>(), 6, "Arco da Calheta","Calheta","Madeira");
+        assertEquals("1, Arco da Calheta, Calheta, Madeira", prop.toString());
+    }
+    @Test
     void settingAndGetting() {
         Coordinates c = new Coordinates(0, 0);
         Property prop = new Property(1, 2, 3, 4,

@@ -40,7 +40,7 @@ public class Visualizer extends JFrame {
     private boolean showOnlyHighlighted = false;
     public void setHighlightedExchange(OwnerGraphStructure.PropertyPair highlightedExchange) {
         this.highlightedExchange = highlightedExchange;
-        this.showOnlyHighlighted = true;
+        //this.showOnlyHighlighted = true;
     }
     public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
 
@@ -162,11 +162,8 @@ public class Visualizer extends JFrame {
                 boolean isHighlighted =
                         (highlightedOwner != null && p.getOwnerID() == highlightedOwner) ||
                                 (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
-                if(isHighlighted) {
-                    g.setColor(Color.MAGENTA);
-                }else {
-                    g.setColor(Color.BLUE);
-                }
+
+                g.setColor(Color.BLUE);
                 if(showOnlyHighlighted && !isHighlighted) { continue; }
                 if(drawOutlines) {
                     Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
@@ -176,7 +173,7 @@ public class Visualizer extends JFrame {
                         prev = cur;
                     }
                 }else {
-                    int radius = clamp((int)(20 * scale), 4, 8) * (isHighlighted?2:1);
+                    int radius = clamp((int)(20 * scale), 4, 8);
                     g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
                 }
                 if( scale > 1.0 && !hideLabels) {
@@ -188,7 +185,7 @@ public class Visualizer extends JFrame {
                 }
 
             }
-            g.setColor(Color.RED);
+            g.setColor(Color.DARK_GRAY);
 
 
             for(Property p : graph.vertexSet()) {
@@ -203,6 +200,47 @@ public class Visualizer extends JFrame {
                     Coordinates other = transform(positions.get(neighbour));
                     g.drawLine((int) pos.getX(), (int) pos.getY(), (int) other.getX(), (int) other.getY());
                 }
+            }
+            g.setColor(Color.RED);
+            for(Property p : graph.vertexSet()) {
+                boolean isPartOfExchange = (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
+
+                boolean isHighlighted =
+                        (highlightedOwner != null && p.getOwnerID() == highlightedOwner) || isPartOfExchange;
+                if(!isHighlighted) {
+                    continue;
+                }
+                if(isPartOfExchange) {
+                    g.setColor(Color.MAGENTA);
+                }else {
+                    g.setColor(Color.RED);
+                }
+                Coordinates pos = transform(positions.get(p));
+                float padding = 10.f;
+                if(pos.getX() < -padding || pos.getY() < -padding || pos.getX() > this.getWidth() + padding || pos.getY() > this.getHeight() + padding) {
+                    continue;
+                }
+
+                if(showOnlyHighlighted && !isHighlighted) { continue; }
+                if(drawOutlines) {
+                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
+                    for(Coordinates v : p.getCorners()) {
+                        Coordinates cur = transform(v);
+                        g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
+                        prev = cur;
+                    }
+                }else {
+                    int radius = clamp((int)(20 * scale), 4, 8) * 2;
+                    g.fillOval((int)pos.getX() - radius / 2, (int)pos.getY() - radius / 2, radius, radius);
+                }
+                if( scale > 1.0 && !hideLabels) {
+                    g.drawString("ID:" + p.getPropertyID(), (int)pos.getX(), (int)pos.getY());
+                    if(scale > 1.5) {
+                        g.drawString("Own:" + p.getOwnerID(), (int)pos.getX(), (int)pos.getY() + g.getFontMetrics().getAscent());
+
+                    }
+                }
+
             }
         }
     }

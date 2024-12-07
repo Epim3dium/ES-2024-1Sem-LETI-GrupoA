@@ -43,13 +43,9 @@ public class Property {
         this.neighbors = new ArrayList<Property>();
 
     }
-
-    public String toString2() {
-        return propertyID + ", " + parish + ", " + municipality + ", " + island;
-    }
     @Override
     public String toString() {
-        return String.valueOf(propertyID);
+        return propertyID + ", " + parish + ", " + municipality + ", " + island;
     }
     public boolean equals(Property obj) {
         if (this == obj) return true;

@@ -105,6 +105,7 @@ public class Coordinates {
      * @throws IllegalArgumentException if the list is null or empty.
      */
     static Coordinates avg(List<Coordinates> coords) {
+        if(coords.size() == 0) throw new IllegalArgumentException();
         Coordinates result = new Coordinates(0, 0);
         for (Coordinates coord : coords) {
             result.setX(result.getX() + coord.getX());
