@@ -25,6 +25,7 @@
 - Git/GitHub: Local version control and remote repository for project collaboration.
 - Trello: Project management according to the Scrum approach, with tracking between the user story cards and the respective events on GitHub.
 - JavaDoc: Documentation of the software produced.
+- Qodana: Evaluation of the quality of the software produced, based on metrics extracted from the code 
 
 ## Extra Features:
 ### Visualizer
