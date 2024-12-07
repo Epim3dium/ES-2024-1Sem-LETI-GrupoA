@@ -28,8 +28,8 @@
 - Qodana: Evaluation of the quality of the software produced, based on metrics extracted from the code 
 
 ## Extra Features:
-### Visualizer
-We added an additional visualizer functionality that is defined in the main GUI menu as Structure 1.
+### Visualiser
+We added an additional visualiser functionality that is defined in the main GUI menu as Structure 1.
 There every node is blue color and represents each distinct property, after zooming in the property id
 should become visible. ![img.png](img.png)  
 Each black line represents a neighbourhood relation between two properties. After zooming in even more
@@ -46,7 +46,7 @@ the owner ID of each property will be visible.
 
   ![img_2.png](img_2.png)
 #### Suggestions
-Visualizer is also used in the suggestions tab. After clicking on specific suggestion row, both of properties that are considered
+Visualiser is also used in the suggestions tab. After clicking on specific suggestion row, both of properties that are considered
 in this exchange will be highlighted (Magenta color) in new Visuzalizer window.
 ![img_3.png](img_3.png)
 
