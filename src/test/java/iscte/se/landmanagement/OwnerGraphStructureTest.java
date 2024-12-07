@@ -74,7 +74,7 @@ class OwnerGraphStructureTest {
             assertTrue(increases.getValue() > 0);
             diffs.add(Math.abs(increases.getKey() - increases.getValue()));
         }
-        assert(diffs.getFirst() > diffs.getLast());
+        assertTrue(diffs.getFirst() < diffs.getLast());
     }
 
 }

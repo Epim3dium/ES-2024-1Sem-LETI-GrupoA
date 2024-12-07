@@ -67,7 +67,6 @@ public class GraphStructure {
     public GraphStructure(ArrayList<Property> properties, int threshold) {
         this.properties = properties;
         this.threshold = threshold;
-        System.out.println("w");
         this.graph = formGraph();
 
     }
@@ -105,7 +104,6 @@ public class GraphStructure {
             max_prop_size = Math.max(current.area().getY(), max_prop_size);
             aabbs.add(current);
         }
-        System.out.println("max edges: " + max_edges);
 
         double cell_size = max_prop_size;
         double maxIdxX = range_all.area().getX() / cell_size;
@@ -164,7 +162,6 @@ public class GraphStructure {
                 }
             }
         }
-        System.out.println(t + " neighbours ");
 
         //searching for neighbours
         return g;
