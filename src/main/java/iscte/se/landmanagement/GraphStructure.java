@@ -1,69 +1,46 @@
 package iscte.se.landmanagement;
 
-
-import com.mxgraph.swing.mxGraphComponent;
-import javafx.util.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
-import org.jgrapht.ext.JGraphXAdapter;
-import com.mxgraph.layout.mxCircleLayout;
-
-import javax.swing.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.exit;
-
-
+/**
+ * Represents a graph structure for managing and visualizing relationships between properties.
+ * Each property is represented as a vertex, and edges are created between vertices
+ * if the properties meet a specified adjacency condition.
+ */
 public class GraphStructure {
 
     private Graph<Property, DefaultEdge> graph;
-
-
-
     private ArrayList<Property> properties;
     private int threshold;
 
-    public static void main(String[] args) throws Exception {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("Madeira-Moodle-1.1.csv");
-        if (url == null) {
-            System.out.println("Arquivo CSV não encontrado!");
-            return;
-        }
-
-        Path path = Paths.get(url.toURI());
-        PropFileReader propFileReader = new PropFileReader(path);
-
-        propFileReader.readFile();
-        propFileReader.convertToPropertiy();
-
-        GraphStructure g = new GraphStructure(propFileReader.getProperties(), 1);
-        System.out.println(g.getG().vertexSet().size());
-        System.out.println(g.getG().edgeSet().size());
-        //g.visualizeGraph();
-        g.visualizeGraph();
-
-
-    }
+    /**
+     * Visualizes the graph and highlights a specific property pair.
+     *
+     * @param to_highlight The property pair to highlight in the visualization.
+     */
     public void visualizeGraph(OwnerGraphStructure.PropertyPair to_highlight) {
         Visualizer vis = new Visualizer(graph);
         vis.setHighlightedExchange(to_highlight);
     }
+
+    /**
+     * Visualizes the graph without highlighting any specific properties.
+     */
     public void visualizeGraph() {
         Visualizer vis = new Visualizer(graph);
     }
 
-
+    /**
+     * Constructs a {@code GraphStructure} based on a list of properties and a distance threshold.
+     *
+     * @param properties The list of properties to include in the graph.
+     * @param threshold  The maximum distance (in units) for properties to be considered adjacent.
+     */
     public GraphStructure(ArrayList<Property> properties, int threshold) {
         this.properties = properties;
         this.threshold = threshold;
@@ -72,26 +49,27 @@ public class GraphStructure {
     }
 
 
-
-
     /**
      * Creates a graph where each vertex represents a {@link Property}, and edges are added
-     * between vertices if the corresponding properties are adjacent based on a defined distance condition.
+     * between vertices if the corresponding properties are adjacent based on the threshold.
      *
-     * @return
+     * @return A {@link Graph} representing the adjacency relationships between properties.
      */
     private Graph<Property, DefaultEdge> formGraph() {
 
         Graph<Property, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         int t = 0;
-
+        // Adding properties as vertices
         for (Property property : properties) {
             g.addVertex(property);
         }
+
         double max_prop_size = 0.f;
         List<AABB> aabbs = new ArrayList<>();
         AABB range_all = new AABB();
         int max_edges = 0;
+
+        // Calculate bounding boxes and overall range
         for (Property property : properties) {
             List<Coordinates> corners = property.getCorners();
             AABB current = new AABB();
@@ -105,10 +83,12 @@ public class GraphStructure {
             aabbs.add(current);
         }
 
+        // Create a grid to optimize adjacency checks
         double cell_size = max_prop_size;
         double maxIdxX = range_all.area().getX() / cell_size;
         double maxIdxY = range_all.area().getY() / cell_size;
         List<List<List<Integer>>> grid = new ArrayList<>();
+
         //creating the grid
         for (int i = 0; i < maxIdxY + 1; i++) {
             grid.add(new ArrayList<>());
@@ -116,6 +96,7 @@ public class GraphStructure {
                 grid.get(i).add(new ArrayList<>());
             }
         }
+
         //inserting to grid
         for (int i = 0; i < properties.size(); i++) {
             AABB aabb = aabbs.get(i);
@@ -127,6 +108,7 @@ public class GraphStructure {
             int indexY = (int) transformed.getY();
             grid.get(indexY).get(indexX).add(i);
         }
+
         for (int i = 0; i < maxIdxY + 1; i++) {
             for (int ii = 0; ii < maxIdxX + 1; ii++) {
                 List<Integer> potential_neighbors = new ArrayList<>(grid.get(i).get(ii));
@@ -162,8 +144,6 @@ public class GraphStructure {
                 }
             }
         }
-
-        //searching for neighbours
         return g;
     }
 
@@ -182,10 +162,9 @@ public class GraphStructure {
     /**
      * Determines if two properties are adjacent based on the distance between their corners.
      *
-     * @param p1 p1 The first {@link Property} object to compare.
-     * @param p2 p2 The second {@link Property} object to compare.
-     * @return `true` if the properties are adjacent (i.e., at least one pair of corners has a distance
-     * *         less than or equal to the threshold), otherwise `false`.
+     * @param p1 The first property.
+     * @param p2 The second property.
+     * @return {@code true} if the properties are adjacent, {@code false} otherwise.
      */
     public boolean areAdjacentByDistance(Property p1, Property p2) {
         List<Coordinates> corners1 = p1.getCorners();
@@ -219,7 +198,6 @@ public class GraphStructure {
     public Graph<Property, DefaultEdge> getG() {
         return this.graph;
     }
-
 
 
     public ArrayList<Property> getProperties() {

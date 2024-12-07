@@ -13,14 +13,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A utility class for reading and parsing property data from a `.csv` file.
+ * The file contains information about properties, including their attributes and coordinates.
+ */
 public class PropFileReader {
     private final Path filePath;
     private ArrayList<Property> properties;
     private List<String[]> fileLines;
 
     /**
-     *  Builds a .csv file reader based on the Path given
-     * @param filePath path of the file that is ready to be read
+     * Initializes a reader for a property `.csv` file based on the given file path.
+     *
+     * @param filePath The path to the `.csv` file to be read.
      */
     public PropFileReader(Path filePath) {
         this.filePath = filePath;
@@ -28,18 +33,29 @@ public class PropFileReader {
         this.fileLines = new ArrayList<>();
     }
 
+    /**
+     * Retrieves the raw lines read from the `.csv` file.
+     *
+     * @return A list of string arrays, where each array represents a row in the `.csv` file.
+     */
     public List<String[]> getFileLines() {
         return fileLines;
     }
 
+    /**
+     * Retrieves the list of properties parsed from the `.csv` file.
+     *
+     * @return An {@code ArrayList} of {@link Property} objects.
+     */
     public ArrayList<Property> getProperties() {
         return properties;
     }
 
     /**
-     *  Reads the .csv using the CSVParser dependecy with the split ";" that is defined on our files
+     * Reads the `.csv` file and parses its contents into raw lines.
+     * The parser uses `;` as the delimiter, as defined in the file format.
      *
-     * @throws Exception If the filePath is invalid
+     * @throws Exception If the file cannot be read (e.g., invalid path or file format issues).
      */
     public void readFile() throws Exception {
         List<String[]> lines = new ArrayList<>();
@@ -56,10 +72,10 @@ public class PropFileReader {
     }
 
     /**
-     * Converts the String of the .csv file  that contains
-     * the coordinates of the corners into an ArrayList of {@link Coordinates}
-     * @param line String containing the coordinates
-     * @return ArrayList with the {@link Coordinates} of the corners
+     * Converts a string of coordinates from the `.csv` file into a list of {@link Coordinates} objects.
+     *
+     * @param line A string containing the coordinates of property corners.
+     * @return An {@code ArrayList} of {@link Coordinates} representing the corners of the property.
      */
     protected ArrayList<Coordinates> readCoordinates(String line) {
         ArrayList<Coordinates> coordinates = new ArrayList<>();
@@ -79,7 +95,8 @@ public class PropFileReader {
     }
 
     /**
-     * Converts the data of the .csv into attributes of a {@link Property}
+     * Converts the raw data read from the `.csv` file into a list of {@link Property} objects.
+     * The method validates the data to ensure properties have valid coordinates and the correct number of attributes.
      */
     public void convertToPropertiy() {
 
@@ -104,7 +121,7 @@ public class PropFileReader {
                 String island = lines[9].trim();
 
                 properties.add(new Property(propertyId, parcelId, parcelNum, shapeLength, shapeArea, coords, ownerId, parish, municipality, island));
-            }else{
+            } else {
                 System.err.println("The file doesn't have the required size of columns");
                 System.exit(1);
             }

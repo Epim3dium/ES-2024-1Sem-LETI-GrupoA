@@ -1,7 +1,12 @@
 package iscte.se.landmanagement;
-import java.util.ArrayList;
-import java.util.Collection;
 
+import java.util.ArrayList;
+
+/**
+ * Represents a property with geographic and ownership details.
+ * Each property includes attributes such as area, perimeter, corners (coordinates),
+ * ownership information, and neighboring properties.
+ */
 public class Property {
     private int propertyID;
     private double parcelID;
@@ -15,7 +20,20 @@ public class Property {
     private String island;
     private ArrayList<Property> neighbors;
 
-
+    /**
+     * Constructs a {@code Property} with full details including coordinates and neighbors.
+     *
+     * @param propertyID   The unique identifier for the property.
+     * @param parcelID     The parcel ID associated with the property.
+     * @param parcelNum    The parcel number within its region.
+     * @param shapeLength  The perimeter of the property in appropriate units.
+     * @param shapeArea    The area of the property in appropriate units.
+     * @param corners      A list of {@link Coordinates} representing the property's boundaries.
+     * @param ownerID      The unique identifier of the property's owner.
+     * @param parish       The parish where the property is located.
+     * @param municipality The municipality where the property is located.
+     * @param island       The island where the property is located.
+     */
     public Property(int propertyID, double parcelID, double parcelNum, double shapeLength, double shapeArea, ArrayList<Coordinates> corners, int ownerID, String parish, String municipality, String island) {
         this.propertyID = propertyID;
         this.parcelID = parcelID;
@@ -30,6 +48,13 @@ public class Property {
         this.neighbors = new ArrayList<Property>();
     }
 
+    /**
+     * Constructs a simplified {@code Property} for an owner with aggregated area information.
+     * Primarily used for summarizing properties owned by the same owner.
+     *
+     * @param ownerID The unique identifier of the owner.
+     * @param areaSum The total area of properties owned by the owner.
+     */
     public Property(int ownerID, double areaSum) {
         this.ownerID = ownerID;
         this.parish = "";
@@ -43,16 +68,34 @@ public class Property {
         this.neighbors = new ArrayList<Property>();
 
     }
+
+    /**
+     * Returns a string representation of the property with basic identifying information.
+     *
+     * @return A string containing the property ID, parish, municipality, and island.
+     */
     @Override
     public String toString() {
         return propertyID + ", " + parish + ", " + municipality + ", " + island;
     }
+
+    /**
+     * Checks if this property is equal to another property based on its unique ID.
+     *
+     * @param obj The property to compare with.
+     * @return {@code true} if the properties have the same ID, {@code false} otherwise.
+     */
     public boolean equals(Property obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         return propertyID == ((Property) obj).propertyID;
     }
 
+    /**
+     * Generates a hash code for the property based on its ID.
+     *
+     * @return The hash code of the property.
+     */
     @Override
     public int hashCode() {
         return propertyID;
@@ -138,10 +181,22 @@ public class Property {
         this.island = island;
     }
 
+    // Neighbor Management
+
+    /**
+     * Adds a neighboring property to this property.
+     *
+     * @param p The neighboring property to add.
+     */
     public void addNeighbour(Property p) {
         neighbors.add(p);
     }
 
+    /**
+     * Retrieves the list of neighboring properties.
+     *
+     * @return An {@code ArrayList} of neighboring {@link Property} objects.
+     */
     public ArrayList<Property> getNeighbours() {
         return this.neighbors;
     }
