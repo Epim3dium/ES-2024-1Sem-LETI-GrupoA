@@ -24,11 +24,9 @@ import static java.lang.Math.*;
  */
 public class Visualizer extends JFrame {
 
-    private Graph<Property, DefaultEdge> graph;
-    private JFrame frame = new JFrame();
+    private final JFrame frame = new JFrame();
     private Integer highlightedOwner = null;
     private OwnerGraphStructure.PropertyPair highlightedExchange = null;
-    private boolean showOnlyHighlighted = false;
 
     /**
      * Sets a highlighted property pair for visual emphasis.
@@ -47,12 +45,10 @@ public class Visualizer extends JFrame {
      */
     public Visualizer(Graph<Property, DefaultEdge> inputGraph) {
 
-        System.out.println("staring visualizer");
         // Create a JGraphT graph
-        graph = inputGraph;
         frame.setSize(400, 400);
         frame.setVisible(true);
-        DrawPane panel = new DrawPane(graph);
+        DrawPane panel = new DrawPane(inputGraph);
         final Point dragPoint = new Point();
         panel.addMouseListener(new MouseAdapter() {
             @Override
@@ -60,15 +56,11 @@ public class Visualizer extends JFrame {
                 dragPoint.setLocation(e.getPoint());
             }
         });
-        panel.addMouseWheelListener(new MouseWheelListener() {
+        panel.addMouseWheelListener(e -> {
+            panel.scale += e.getWheelRotation() * 0.001; // Positive for down, negative for up
+            panel.scale = clamp(panel.scale, 0.0, 3.0);
+            frame.repaint();
 
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                panel.scale += e.getWheelRotation() * 0.001; // Positive for down, negative for up
-                panel.scale = clamp(panel.scale, 0.0, 3.0);
-                frame.repaint();
-
-            }
         });
 
         panel.addMouseMotionListener(new MouseAdapter() {
@@ -77,8 +69,6 @@ public class Visualizer extends JFrame {
                 panel.offset.setX(panel.offset.getX() + (e.getX() - dragPoint.x) / panel.scale);
                 panel.offset.setY(panel.offset.getY() + (e.getY() - dragPoint.y) / panel.scale);
                 dragPoint.setLocation(e.getPoint());
-
-                System.out.println("drag point: " + panel.offset.getX() + ", " + panel.offset.getY());
                 frame.repaint();
             }
         });
@@ -106,25 +96,19 @@ public class Visualizer extends JFrame {
 
         JButton button = new JButton("Show Outlines");
         panel.add(button);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Action to be performed when the button is clicked
-                panel.drawOutlines = !panel.drawOutlines;
-                panel.revalidate();
-                panel.repaint();
-            }
+        button.addActionListener(_ -> {
+            // Action to be performed when the button is clicked
+            panel.drawOutlines = !panel.drawOutlines;
+            panel.revalidate();
+            panel.repaint();
         });
         button = new JButton("Hide Labels");
         panel.add(button);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Action to be performed when the button is clicked
-                panel.hideLabels = !panel.hideLabels;
-                panel.revalidate();
-                panel.repaint();
-            }
+        button.addActionListener(_ -> {
+            // Action to be performed when the button is clicked
+            panel.hideLabels = !panel.hideLabels;
+            panel.revalidate();
+            panel.repaint();
         });
         panel.revalidate();
         panel.repaint();
@@ -138,9 +122,9 @@ public class Visualizer extends JFrame {
         double scale = 1.0 / 200.0;
         public boolean drawOutlines = false;
         public boolean hideLabels = false;
-        private Coordinates min = new Coordinates(1e10, 1e10);
-        private HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
-        private Graph<Property, DefaultEdge> graph;
+        private final Coordinates min = new Coordinates(1e10, 1e10);
+        private final HashMap<Property, Coordinates> positions = new HashMap<Property, Coordinates>();
+        private final Graph<Property, DefaultEdge> graph;
 
         /**
          * Initializes the panel with a graph and computes vertex positions.
@@ -149,7 +133,7 @@ public class Visualizer extends JFrame {
          */
         public DrawPane(Graph<Property, DefaultEdge> inputGraph) {
             graph = inputGraph;
-            System.out.println(graph.vertexSet().size());
+
             for (Property p : graph.vertexSet()) {
                 Coordinates pos = Coordinates.avg(p.getCorners());
                 positions.put(p, pos);
@@ -184,16 +168,11 @@ public class Visualizer extends JFrame {
                 if (pos.getX() < -padding || pos.getY() < -padding || pos.getX() > this.getWidth() + padding || pos.getY() > this.getHeight() + padding) {
                     continue;
                 }
-                boolean isHighlighted =
-                        (highlightedOwner != null && p.getOwnerID() == highlightedOwner) ||
-                                (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
 
                 g.setColor(Color.BLUE);
-                if (showOnlyHighlighted && !isHighlighted) {
-                    continue;
-                }
+
                 if (drawOutlines) {
-                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
+                    Coordinates prev = transform(p.getCorners().getLast());
                     for (Coordinates v : p.getCorners()) {
                         Coordinates cur = transform(v);
                         g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
@@ -216,13 +195,6 @@ public class Visualizer extends JFrame {
 
 
             for (Property p : graph.vertexSet()) {
-                boolean isHighlighted =
-                        (highlightedOwner != null && p.getOwnerID() == highlightedOwner) ||
-                                (highlightedExchange != null && (p == highlightedExchange.getFirst() || p == highlightedExchange.getSecond()));
-                if (showOnlyHighlighted && !isHighlighted) {
-                    continue;
-                }
-
                 Coordinates pos = transform(positions.get(p));
                 for (DefaultEdge edge : graph.edgesOf(p)) {
                     Property neighbour = graph.getEdgeTarget(edge);
@@ -250,11 +222,8 @@ public class Visualizer extends JFrame {
                     continue;
                 }
 
-                if (showOnlyHighlighted) {
-                    continue;
-                }
                 if (drawOutlines) {
-                    Coordinates prev = transform(p.getCorners().get(p.getCorners().size() - 1));
+                    Coordinates prev = transform(p.getCorners().getLast());
                     for (Coordinates v : p.getCorners()) {
                         Coordinates cur = transform(v);
                         g.drawLine((int) cur.getX(), (int) cur.getY(), (int) prev.getX(), (int) prev.getY());
