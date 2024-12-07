@@ -49,5 +49,5 @@ Visualizer is also used in the suggestions tab. After clicking on specific sugge
 in this exchange will be highlighted (Magenta color) in new Visuzalizer window.
 ![img_3.png](img_3.png)
 
-# Additional Note
-- The JavaDocs can only be generated with the Maven Dependecy and not by the IDE
+# Additional(s) Note(s)
+- The JavaDocs can only be generated with the Maven Dependecy and not by the IDE, but they can be seen on the JavaDocs folder. 
