@@ -48,3 +48,6 @@ the owner ID of each property will be visible.
 Visualizer is also used in the suggestions tab. After clicking on specific suggestion row, both of properties that are considered
 in this exchange will be highlighted (Magenta color) in new Visuzalizer window.
 ![img_3.png](img_3.png)
+
+# Additional Note
+- The JavaDocs can only be generated with the Maven Dependecy and not by the IDE
